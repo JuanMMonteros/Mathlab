@@ -12,8 +12,8 @@ for delay=delays
     ntaps=13; % Mantenerlo impar para simplificar
     group_delay = (ntaps-1)/2; % Este delay hay que compensarlo porque representa la cola de la convolucion
     nline = -(ntaps-1)/2:(ntaps-1)/2;
-    %h1 = sinc(nline-delay);
-    h1= my_rcosine(1,1,0.5,ntaps,delay);
+    h1 = sinc(nline-delay);
+    %h1= my_rcosine(1,1,0.5,ntaps,delay);
 
     stem(nline, h1);
     hold all

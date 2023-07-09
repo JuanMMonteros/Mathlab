@@ -22,7 +22,7 @@ tone0_disc = A0*cos(omega_0.*(0:Nsamples-1));
 %x_disc = tone0_disc+tone1_disc;
 x_disc = tone0_disc;
 
-% Genero una señal de referencia que es el tono que "en tiempo continuo"
+ %Genero una señal de referencia que es el tono que "en tiempo continuo"
 tline_continuo=(0:Nsamples*NOS-1).*Tch;
 tone_ref = A0*cos(omega_0*fs.*tline_continuo');
 
@@ -33,18 +33,18 @@ tone_ref = A0*cos(omega_0*fs.*tline_continuo');
 % respuesta al impulso es un pulso de duracion Ts
 
 % Opcion 1: retenedor de orden 0
-% Si Ts = NOS*Tch, entonces el filtro es un pulso rectangular de NOS
+%Si Ts = NOS*Tch, entonces el filtro es un pulso rectangular de NOS
 % muestras
-%dac_filter = ones(1,NOS); grpd=0;
+dac_filter = ones(1,NOS); grpd=0;
 
 % Opcion 2: retenedor de orden 1 (interp lineal)
-dac_filter=1/NOS*conv(ones(1,NOS),ones(1,NOS)); grpd=NOS-1;
+%dac_filter=1/NOS*conv(ones(1,NOS),ones(1,NOS)); grpd=NOS-1;
 
 % Opcion 3: Reconstruccion ideal
-nfilt=-1000:1000; dac_filter = sinc(nfilt/Ts*Tch); grpd = grpdelay(dac_filter);grpd =grpd(1);
+%nfilt=-1000:1000; dac_filter = sinc(nfilt/Ts*Tch); grpd = grpdelay(dac_filter);grpd =grpd(1);
 
 % opcion 4: Filtro FIR custom
-Nord=16; dac_filter=NOS*fir1(Nord,fs/fch); grpd=Nord/2;
+%Nord=16; dac_filter=NOS*fir1(Nord,fs/fch); grpd=Nord/2;
 
 
 
@@ -77,7 +77,8 @@ legend("Discrete samples", "ZOH input","ZOH output")
 
 %%
 % Plot en frecuencia
-NFFT = 256*1024;
+NFFT = 256*1024;%resolucion de la w
+
 fvec_tc = (0:NFFT-1)/NFFT*fch;
 fvec_td = (0:NFFT-1)/NFFT*fs;
 

@@ -16,7 +16,6 @@ grid on
 xlabel('Frecuencia Discreta')
 ylabel('Amplitud')
 title('TF de la senial original')
-
 % Se pretende retrasar la senial una fraccion de muestra
 delay=0.5; % esto representa una fraccion de muestra
 % Genero el filtro de la eq 4.65 del libro

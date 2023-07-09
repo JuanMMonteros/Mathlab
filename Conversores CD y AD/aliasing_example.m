@@ -17,7 +17,6 @@ Ts=1/fs;
 ejemplo=1;
 
 switch ejemplo
-    case 1
         
         % Ejemplo 1
         f0 = 2.5e6; % Frecuencia del tono
