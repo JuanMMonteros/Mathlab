@@ -13,15 +13,15 @@ clc;        % Clear command window
 fs = 2.5*200e6;               % Sampling frequency [Hz]
 Ts = 1/fs;              % Sampling time [s]
 
-OVR = 10;                % Oversampling factor (fs_ch/fs)
+OVR = 4;                % Oversampling factor (fs_ch/fs)
 fs_ch = fs*OVR;         % Channel sampling frequency [Hz]
  
 n_samples = 1e2;
 % Sim length in digital domain
-omega_0 = 2*pi*150e6;   % Tone frequency
+omega_0 = 2*pi*100e6;   % Tone frequency
 T_tone=2*pi/(omega_0);% Periodo del Tono 
 
-h_taps = 65;           % Filter taps 
+h_taps = 5;           % Filter taps 
 h_fc = 0.4*fs;          % Filter cut frequency
 
 fz = 15;                % Plots Font Size
@@ -33,10 +33,10 @@ t_up_v = (0:n_samples*OVR-1)*1/fs_ch;
 t_v = (0:n_samples-1)*Ts;
 
 % Ideal signal in digital domain
-tone_dig = 2*cos(omega_0*t_v); 
+tone_dig = 2*cos(2*pi*omega_0*t_v); 
 
 % Signal in contiuous domain
-tone_cont = 2*cos(omega_0*t_up_v);  
+tone_cont = 2*cos(2*pi*omega_0*t_up_v);  
 
 % AntiAlias filter (AAF)
 filter_aa = fir1(h_taps-1, h_fc/(fs_ch/2));
@@ -61,7 +61,7 @@ f_up_v = (-NFFT*OVR/2:NFFT*OVR/2-1)*fs_ch/(NFFT*OVR);
 X_d_v = fftshift(abs(fft(tone_cf_dig, NFFT))/n_samples);
 X_di_v = fftshift(abs(fft(tone_dig, NFFT))/(n_samples));
 X_cf_v = fftshift(abs(fft(tone_cont_f, NFFT*OVR))/(n_samples*OVR));
-X_c_v = fftshift(abs(fft(tone_cont, NFFT*OVR))/(n_samples*OVR));
+X_c_v = fftshift(abs(fft(tone_cont_f, NFFT*OVR))/(n_samples*OVR));
 H_v = fftshift(abs(fft(filter_aa, NFFT*OVR)));
 
 %% Plots 
@@ -82,7 +82,7 @@ ylabel('Amplitude', 'Interpreter','latex','FontSize', fz);
 legend({'C','C-fil','D','D-ideal'}, 'Interpreter','latex','FontSize', fz-2);
 grid on;
 set(gcf, 'Position', [50 50 500 500],'Color', 'w');
-xlim([0 2*T_tone/1e-6])
+xlim([0 2*T_tone/1e-5])
 
 % Freq
 figure
@@ -99,5 +99,4 @@ ylabel('Amplitude', 'Interpreter','latex','FontSize', fz);
 legend({'C','Fil','D','D-ideal','H'}, 'Interpreter','latex','FontSize', fz-2);
 grid on;
 set(gcf, 'Position', [550 50 800 500],'Color', 'w');
-xlim([-4*fs/1e6 4*fs/1e6])
 

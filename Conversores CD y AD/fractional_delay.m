@@ -33,7 +33,7 @@ title('Interpolation filter')
 % Version alternativa del sinc
 h2= my_rcosine(1,1,0.2,ntaps,delay);
 
-yf = filter(h2,1,[xsig; zeros(group_delay,1)]); % Agrego zeros para mantener el largo de la senial filtrada
+yf = filter(h1,1,[xsig; zeros(group_delay,1)]); % Agrego zeros para mantener el largo de la senial filtrada
 yf=yf(group_delay+1:end); % Corrijo el retardo de grupo
 
 % Plot en tiempo discreto para ver el retardo

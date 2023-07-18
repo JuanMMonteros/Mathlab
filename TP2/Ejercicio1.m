@@ -5,7 +5,7 @@ OVR = 10; % Oversampling factor
 fch = OVR * fs; % Frecuencia de muestreo del tiempo continuo
 Tch=1/fch; %Periodo del canal 
 
-Nsamples = 200; % Número de muestras para la señal discreta
+Nsamples = 201; % Número de muestras para la señal discreta
 omega_0 = 0.1 * pi; % Frecuencia del tono discreto
 T_tone=2*pi/(omega_0*fs);% Periodo del Tono 
 A0 = 2; % Amplitud del tono discreto
@@ -66,6 +66,7 @@ NFFT = 256*1024;%resolucion de la w
 fvec_tc = (0:NFFT-1)/NFFT*fch;
 fvec_td = (0:NFFT-1)/NFFT*fs;
 
+% Ventaneo para evitar "spectral leakage"
 W0 = hamming(length(x_disc))';
 W1 = hamming(length(x_up))';
 Ns = length(x_disc);
