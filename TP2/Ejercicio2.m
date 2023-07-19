@@ -18,10 +18,10 @@ fs_ch = fs*OVR;         % Channel sampling frequency [Hz]
  
 n_samples = 1e2;
 % Sim length in digital domain
-omega_0 = 2*pi*150e6;   % Tone frequency
+omega_0 = 2*pi*400e6;   % Tone frequency
 T_tone=2*pi/(omega_0);% Periodo del Tono 
 
-h_taps = 65;           % Filter taps 
+h_taps = 5;           % Filter taps 
 h_fc = 0.4*fs;          % Filter cut frequency
 
 fz = 15;                % Plots Font Size

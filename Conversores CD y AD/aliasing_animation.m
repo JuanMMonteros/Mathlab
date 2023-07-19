@@ -91,7 +91,6 @@ for idx = 1:n_exp
     grid on
     ylim([0,1.6*Ps])
     set(gcf, 'Position', [600 50 500 500],'Color', 'w');
-    
-    pause(.1) % Pause .1 [sec]
+   
     
 end

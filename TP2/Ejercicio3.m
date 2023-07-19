@@ -2,13 +2,12 @@
 clear;      % Clear all variables
 close all;  % Close all figures
 clc;        % Clear command window
-%%
+%% Parameters
 fs=400e6;
 Ts=1/fs;
 OVR=256;
 fs_ch=fs*OVR;
 fz = 15;                % Plots Font Size
-
 n_samples = 1e2;
 % Sim length in digital domain
 omega_0 = 2*pi*150e6;   % Tone frequency
@@ -40,7 +39,11 @@ delay=retardo/Ts; % esto representa una fraccion de muestra
 ntaps=31; % Mantenerlo impar para simplificar
 group_delay = (ntaps-1)/2; % Este delay hay que compensarlo porque representa la cola de la convolucion
 nline = -(ntaps-1)/2:(ntaps-1)/2';
-h = sinc(nline-delay);
+h1 = sinc(nline-delay);
+ntaps=311; % Mantenerlo impar para simplificar
+group_delay = (ntaps-1)/2; % Este delay hay que compensarlo porque representa la cola de la convolucion
+nline = -(ntaps-1)/2:(ntaps-1)/2';
+h2 = sinc(nline-delay);
 tone_dig1=transpose(tone_dig);
 tone_dig1=[tone_dig1; zeros(group_delay,1)];
 tone_dig_delay = filter(h,1,tone_dig1);% Agrego zeros para mantener el largo de la senial filtrada
@@ -70,16 +73,14 @@ p3.MarkerFaceColor = p3.Color;
 p3.MarkerEdgeColor = p3.Color;
 hold on;
 p4 = plot(t_v/1e-6, tone_dig_delay ,'ob','Linewidth',1.5);
-title('Señales discretas después del delay (usando sinc)');
+title('Señales discretas después del delay ');
 legend([p3, p4], 'Señal continua después del delay', 'Señal discreta después del delay');
-% Mostrar solo dos periodos para mayor claridad
+% Mostrar solo dos periodos 
 xlim([T_tone/1e-6, 3*T_tone/1e-6]);
-% Ajustar los subplots para una mejor visualización
-sgtitle('Simulación de Tono discreto y Tono continuo con delay fraccional usando filtro sinc');
 %%
 
 
-% FFT variables
+%FFT variables
 NFFT = 16 * n_samples;
 f_v = (-NFFT/2:NFFT/2-1)*fs/NFFT;
 f_up_v = (-NFFT*OVR/2:NFFT*OVR/2-1)*fs_ch/(NFFT*OVR);
@@ -89,22 +90,24 @@ X_d = fftshift(abs(fft(tone_dig, NFFT))/n_samples);
 X_c = fftshift(abs(fft(tone_cont, NFFT*OVR))/(n_samples*OVR));
 X_d_delay = fftshift(abs(fft(tone_dig_delay, NFFT))/(n_samples));
 X_c_delay = fftshift(abs(fft(delay_analogico, NFFT*OVR))/(n_samples*OVR));
-H_v = fftshift(abs(fft(h, NFFT*OVR)));
+H_v = fftshift(abs(fft(h, NFFT)));
 
 % Freq
-% figure
-% plot(f_up_v/1e6, X_c,'-r','Linewidth',2);
-% hold on;
-% plot(f_up_v, X_c_delay ,'--k','Linewidth',2);
-% plot(f_v, X_d ,'--b','Linewidth',2);
-% plot(f_v, X_d_delay ,'-.c','Linewidth',1);
-% plot(f_up_v, H_v ,'-.m','Linewidth',1);
-% tit = sprintf('C/D converter');
-% title(tit,'Interpreter','latex','FontSize', fz);
-% xlabel('Frequency [MHz]', 'Interpreter','latex','FontSize', fz);
-% ylabel('Amplitude', 'Interpreter','latex','FontSize', fz);
-% legend({'C','Fil','D','D-ideal','H'}, 'Interpreter','latex','FontSize', fz-2);
-% grid on;
+figure
+plot(f_up_v/1e6, X_c,'-r','Linewidth',2);
+hold on;
+plot(f_up_v/1e6, X_c_delay ,'--k','Linewidth',2);
+plot(f_v/1e6, X_d ,'--b','Linewidth',2);
+plot(f_v/1e6, X_d_delay ,'-.c','Linewidth',1);
+xlim([-201, 201]);
+ylim([0, 1.3]);
+plot(f_v/1e6, H_v ,'-.m','Linewidth',1);
+tit = sprintf('Respuesta en frecuencia');
+title(tit,'Interpreter','latex','FontSize', fz);
+xlabel('Frequency [MHz]', 'Interpreter','latex','FontSize', fz);
+ylabel('Amplitude', 'Interpreter','latex','FontSize', fz);
+legend({'C','C-delay','D-delay','D-ideal', 'H-Fsinc'}, 'Interpreter','latex','FontSize', fz-2);
+%grid on;
 % set(gcf, 'Position', [550 50 800 500],'Color', 'w');
 %Plot en freq para ver si el filtro afecta el modulo de la seÃ±al
 % figure
