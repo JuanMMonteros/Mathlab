@@ -65,11 +65,11 @@ for idx = 1:length(OVS_v)
     plot(fd_v,fftshift(abs(fft(xd_v,NFFT)))/(n_samples/OVS),'Linewidth',1.5);
     hold on;
     
-    % Plot signal in freq (ZOOM)
-    figure(3); 
-    plot(fd_v,fftshift(abs(fft(xd_v,NFFT)))/(n_samples/OVS),'Linewidth',1.5);
-    hold on;
-    
+     %Plot signal in freq (ZOOM)
+     figure(3); 
+     plot(fd_v,fftshift(abs(fft(xd_v,NFFT)))/(n_samples/OVS),'Linewidth',1.5);
+   hold on;
+%     
 end
 
 %% Plots 
@@ -100,7 +100,7 @@ ylabel('Amplitude', 'Interpreter','latex','FontSize', fz);
 legend(leg_c,'Interpreter','latex','Location','nw','FontSize',fz-2);
 grid on; xlim([-10,10])
 set(gcf, 'Position', [50 50 500 500],'Color', 'w');
-
+%%
 % Estimation compare
 figure;
 plot(OVS_v, mean_r*ones(1,length(OVS_v)) ,'--k','Linewidth',1);

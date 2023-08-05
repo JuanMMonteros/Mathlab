@@ -20,7 +20,6 @@ figure
 plot(t, x_t(:, 10))
 hold all
 plot(t, x_t(:, 25))
-
 % Calculo la media = E{X(t)}
 media = sum(x_t,2)/Nexp; % Equivalente mean(x_t,2)
 plot(t, media, '--k', 'LineWidth',2)

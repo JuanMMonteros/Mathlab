@@ -9,7 +9,7 @@ var_log=zeros(Nexp,1);
 
 
 for n=1:Nexp
-    %randn('seed',1);
+    randn('seed',1);
     Ngaus=20000;
     my_var = 1.2;
     sigma = sqrt(my_var);
@@ -24,17 +24,16 @@ var(mean_log)
 %%
 figure
 hist(mean_log,100)
-xlim([0.95,1.05])
+%xlim([0.95,1.05])
 
 %%
-% figure
-% hist(var_log,100)
+ figure
+hist(var_log,100)
 
 %%
-% x = randn(1000,1);
-% y = 0.25*x.^2;
+x = randn(1000,1);
+y = 0.25*x.^2;
+figure
+plot(x,y,'.')
 % 
-% figure
-% plot(x,y,'.')
-% 
-% corr(x,y)
+corr(x,y)

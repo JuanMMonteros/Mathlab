@@ -27,7 +27,8 @@ ylabel('Argument of H(e^{j\omega})')
 grid on
 
 %%
-h =[0.2,0.2,0.2,0.2,0.2];% Respuesta al impulso
+n_taps = 25;
+h_v = ones(1, n_taps) / n_taps;% Respuesta al impulso
 H1 = fft(h, NPOINTS); % Respuesta en frecuencia utilizando FFT
 H1 = fftshift(H1); % Ajustar la posición de los datos utilizando fftshift
 
