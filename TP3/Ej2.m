@@ -1,21 +1,24 @@
 fz = 15;
 
+n_exp = 10e3; % cantidad de experimentos 
+n_sam = 1500; % cantidad de muestras
+mu_x = 1; % media 
+var_x = 2; % varianza
 
-n_exp = 10e3; %numero de experimentos 
-n_sam = 1500; % numero de muestras
-mu_x = 1; %media 
-var_x = 2; %Variansa
 x_m = sqrt(var_x) * randn(n_sam, n_exp) + mu_x; % WGN
 
 % Filter
 n_taps = 25;
-h_v = ones(1, n_taps) / n_taps; %Filtro de promedios moviles
+h_v = ones(1, n_taps) / n_taps; % Filtro de promedios moviles
 h_mf_v = conj(h_v(end:-1:1));
 y_m = filter(h_v, 1, x_m);
 
-%% Autocovariance of x
+%% 
+
+%Autocovariance of x
 % Cx(tau) = E{(x(t))*(x(t-tau))}
 % g(tau) = x(t)*x(t-tau)
+
 Cx_theo_v = zeros(2*n_sam-1, 1);
 Cx_theo_v((length(Cx_theo_v)+1)/2) = Cx_theo_v((length(Cx_theo_v)+1)/2) + var_x;
 
@@ -30,6 +33,7 @@ end
 
 Cx_est_v = 1/n_exp * sum(g_tau_m, 2);
 tau_v = (-n_sam+1:n_sam-1);
+
 % Plot
 figure
 plot(tau_v,Cx_theo_v ,'-r','Linewidth',2);
