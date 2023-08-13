@@ -15,7 +15,7 @@ y_m = filter(h_v, 1, x_m);
 
 %% 
 
-%Autocovariance of x
+%Autocovariance of X
 % Cx(tau) = E{(x(t))*(x(t-tau))}
 % g(tau) = x(t)*x(t-tau)
 
@@ -39,7 +39,7 @@ figure
 plot(tau_v,Cx_theo_v ,'-r','Linewidth',2);
 hold on;
 plot(tau_v,Cx_est_v ,'--b','Linewidth',2);
-tit = sprintf('Autocovariance of x');
+tit = sprintf('Autocovariance of X');
 title(tit,'Interpreter','latex','FontSize', fz);
 xlabel('Tau', 'Interpreter','latex','FontSize', fz);
 ylabel('Amplitude', 'Interpreter','latex','FontSize', fz);
@@ -47,7 +47,7 @@ legend({'Theo','Estimated'}, 'Interpreter','latex','FontSize', fz-2);
 grid on;
 set(gcf, 'Position', [550 50 500 500],'Color', 'w');
 
-%% Autocorrelation of x
+%% Autocorrelation of X
 % Rx(tau) = E{(x(t)-mu)*(x(t-tau)-mu)}
 % g(tau) = x(t)*x(t-tau)
 Rx_theo_v = mu_x^2 * ones(2*n_sam-1, 1);
@@ -71,7 +71,7 @@ figure
 plot(tau_v, Rx_theo_v ,'-r','Linewidth',2);
 hold on;
 plot(tau_v, Rx_est_v ,'--b','Linewidth',2);
-tit = sprintf('Autocorrelation of x');
+tit = sprintf('Autocorrelation of X');
 title(tit,'Interpreter','latex','FontSize', fz);
 xlabel('Tau', 'Interpreter','latex','FontSize', fz);
 ylabel('Amplitude', 'Interpreter','latex','FontSize', fz);
@@ -79,7 +79,7 @@ legend({'Theo','Estimated'}, 'Interpreter','latex','FontSize', fz-2);
 grid on;
 set(gcf, 'Position', [550 50 500 500],'Color', 'w');
 
-%% Autocorrelation of y
+%% Autocorrelation of Y
 % Ry(tau) = E{(y(t)-mu)*(y(t-tau)-mu)}
 % g(tau) = y(t)*y(t-tau)
 h_conv_h_mf_v = conv(h_v,h_mf_v);
@@ -103,14 +103,16 @@ figure
 plot(tau_v,Ry_theo_v ,'-r','Linewidth',2);
 hold on;
 plot(tau_v,Ry_est_v ,'--b','Linewidth',2);
-tit = sprintf('Autocorrelation of y');
+tit = sprintf('Autocorrelation of Y');
 title(tit,'Interpreter','latex','FontSize', fz);
 xlabel('Tau', 'Interpreter','latex','FontSize', fz);
 ylabel('Amplitude', 'Interpreter','latex','FontSize', fz);
 legend({'Theo','Estimated'}, 'Interpreter','latex','FontSize', fz-2);
 grid on; xlim([-n_taps,n_taps]);
 set(gcf, 'Position', [550 50 500 500],'Color', 'w');
-%% Mean of y
+
+
+%% Hope of Y
 % mu_y = mu_x * sum(h(t)) = mu_x * H(f=0);
 mu_y_theo_v = mu_x * sum(h_v) * ones(n_sam, 1);
 mu_y_est_v = 1/n_exp * sum(y_m, 2);
@@ -120,13 +122,14 @@ figure
 plot(mu_y_theo_v ,'-r','Linewidth',2);
 hold on;
 plot(mu_y_est_v ,'--b','Linewidth',2);
-tit = sprintf('Mean of y');
+tit = sprintf('Hope of Y');
 title(tit,'Interpreter','latex','FontSize', fz);
 xlabel('Time', 'Interpreter','latex','FontSize', fz);
 ylabel('Amplitude', 'Interpreter','latex','FontSize', fz);
 legend({'Theo','Estimated'}, 'Interpreter','latex','FontSize', fz-2);
 grid on; 
 set(gcf, 'Position', [550 50 500 500],'Color', 'w');
+
 %% Variance of y
 var_y_theo_v = zeros(n_sam,1);
 var_y_theo_v(:)=var_x*sum(abs(h_v).^2);
@@ -145,7 +148,7 @@ figure
 plot(var_y_theo_v,'-r','Linewidth',2);
 hold on;
 plot(var_y_est_v ,'--b','Linewidth',2);
-tit = sprintf('Varianza of y');
+tit = sprintf('Varianza of Y');
 title(tit,'Interpreter','latex','FontSize', fz);
 xlabel('Time', 'Interpreter','latex','FontSize', fz);
 ylabel('Amplitude', 'Interpreter','latex','FontSize', fz);
