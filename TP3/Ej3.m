@@ -3,13 +3,16 @@ clc; close all; clear
 fz = 15;
 n_exp=1;
 n_sam = 100e3; % numero de muestras
-mu_x = 0; %media 
-var_x = 2; %Variansa
+mu_x = 0;  % Media 
+var_x = 2; % Varianza
+
 x_v = sqrt(var_x) * randn(n_sam,n_exp) + mu_x; % WGN
+
 % Filter
 n_taps = 25;
-h_v = ones(1, n_taps) / n_taps; %Filtro de promedios moviles
+h_v = ones(1, n_taps) / n_taps; % Filtro de promedios moviles
 y_v = filter(h_v, 1, x_v);
+
 %%
 % Plot
 figure
