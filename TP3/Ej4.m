@@ -1,9 +1,9 @@
 clc; close all; clear
 %%
-Lsim=1e9;
+Lsim=1000e3;
 Po = 100e-3;
 OVR=8;
-fs=8e9;
+fs=8e6;
 fz=15;
 
 xn = sqrt(Po)*randn(Lsim,1);
