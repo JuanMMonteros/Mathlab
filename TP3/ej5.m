@@ -4,7 +4,7 @@ fs = 50e6; %Hz
 r = 1; % ohm
 No= insd^2/r; % W/Hz
 Po= No*fs;
-
+fz=16;
 xn = sqrt(Po)*randn(Lsim,1);
 
 NFFT = 1024;
