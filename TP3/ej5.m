@@ -1,3 +1,5 @@
+ clc; close all; clear 
+ %%
 Lsim=1000e3;
 insd = 1e-9; % nV/sqrt(Hz)
 fs = 50e6; %Hz
@@ -6,7 +8,7 @@ No= insd^2/r; % W/Hz
 Po= No*fs;
 fz=16;
 xn = sqrt(Po)*randn(Lsim,1);
-
+%%
 NFFT = 1024;
 win_v = hanning(128);
 noverlap = 0;

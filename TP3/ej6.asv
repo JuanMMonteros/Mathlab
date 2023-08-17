@@ -1,13 +1,13 @@
 clc; close all; clear
 %%
 Lsim=1e6;%Numero de Simbolos enviados 
-sigma2=0.5;% Potencia del ruido
+sigma2=0.1;% Potencia del ruido
 %prubas en las que aumente SNR Po=0.05, dismuni la SNR =0.5
 SNR= 1/sigma2;
 SNR_db=10*log10(SNR);
 X = randi([0 1], Lsim,1)*2-1; % Lsim es el n´umero de s´?mbolos a transmitir
 N = sqrt(sigma2).*randn(Lsim,1); % sigma2 es la varianza del ruido
-SNR_practica=10*log10(sum(X.*X)/sum(N.*N));
+SNR_practica=10*log10(sum(X^2)/sum(N^2));
 Y=X+N; % Se~nal recibida, son los s´?mbolos de TX contaminados con ruido
 % Toma de decision en el receptor
 Y_decidido = Y;
