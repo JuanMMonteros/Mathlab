@@ -1,7 +1,7 @@
 clc; close all; clear
 %%
 Lsim=1e6;%Numero de Simbolos enviados 
-sigma2=0.5;% Potencia del ruido
+sigma2=0.1;% Potencia del ruido
 %prubas en las que aumente SNR Po=0.05, dismuni la SNR =0.5
 SNR= 1/sigma2;
 SNR_db=10*log10(SNR);
