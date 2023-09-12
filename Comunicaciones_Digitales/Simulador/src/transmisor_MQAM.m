@@ -11,7 +11,9 @@ function [o_data_s] = transmisor_MQAM(i_config_s)
     config.rolloff = 0.1;               % Rolloff del filtro conformador
     config.pulse_shaping_ntaps = 201;   % Taps del filtro conformador
     config.pulse_shaping_type = 0;      % 0: RRC, 1: RC
+  
     
+   
     %--------------------------%
     %       REASSIGNMENT
     %--------------------------%
@@ -57,7 +59,7 @@ function [o_data_s] = transmisor_MQAM(i_config_s)
         htx = raised_cosine(BR/2, fs, rolloff, pulse_shaping_ntaps, 0);
     end
  
-    yup = filter(htx,1,xup);
+    s = filter(htx,1,xup);
 
     clear xup
     
@@ -65,7 +67,8 @@ function [o_data_s] = transmisor_MQAM(i_config_s)
     %         OUTPUT
     %--------------------------%
 
-    o_data_s.oversampled_output = yup;
+    o_data_s.oversampled_output = s;
+    o_data_s.filter = htx;
     o_data_s.tx_symbs = tx_symbs;
         
 end

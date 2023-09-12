@@ -17,12 +17,18 @@ config_s.en_plots = 0;
 
 % -- Tx --
 config_s.tx_s.BR = 32e9;                    % Baud rate
-%config_s.tx_s.M = 16;                       % Cantidad de niveles de la modulacion
+config_s.tx_s.M = 4;                       % Cantidad de niveles de la modulacion
 config_s.tx_s.NOS = 2;                      % Tasa de sobremuestreo
 config_s.tx_s.Lsymbs = 1e5;                 % Cantidad de simbolos
 config_s.tx_s.rolloff = 0.5;                % Rolloff del filtro conformador
 config_s.tx_s.pulse_shaping_ntaps = 201;    % Cantidad de taps del PS
 config_s.tx_s.pulse_shaping_type = 1;       % 0: RRC, 1: RC
+config_s.ch_awgn.EdNo_db = 10; 
+config_s.ch_awgn.M =  4;                       % Cantidad de niveles de la modulacion
+config_s.ch_awgn.NOS =  2;
+config_s.rx_s.filter_type = 1 ;
+config_s.rx_s.NOS =  2;
+ config_s.rx_s.ntaps = 201;
 
 %% Sweep
 

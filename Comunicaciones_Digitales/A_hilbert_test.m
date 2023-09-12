@@ -28,7 +28,7 @@ x = xi + 1j*xq;
 xup = upsample(x,N);
 
 % Filter to interpolate the signal
-h = raised_cosine(BR/2, fs, rolloff, h_taps, 0);
+h = my_rcosine(BR/2, fs, rolloff, h_taps, 0);
 h_delay = (h_taps-1)/2;
 yup = filter(h,1,[xup; zeros(h_taps, 1)]);
 yup = yup(1+h_delay:end);
