@@ -1,5 +1,6 @@
 %-----------------------------------------------------------------------------%
-%				               FUNDACION FULGOR
+%				               MARVELL TECHNOLOGY
+%					             LIDAR - 2021/22
 %-----------------------------------------------------------------------------%
 
 function s_output = overwrite_parameters (overwrite_s, default_config_s)

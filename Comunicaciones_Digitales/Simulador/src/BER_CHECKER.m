@@ -1,7 +1,42 @@
-function [outputArg1,outputArg2] = BER_CHECKER(inputArg1,inputArg2)
-%BER_CHECKER Summary of this function goes here
-%   Detailed explanation goes here
-outputArg1 = inputArg1;
-outputArg2 = inputArg2;
+function [o_data_s] = BER_CHECKER(i_config_s,rx,tx_symbs)
+%--------------------------%
+%     DEFAULT SETTINGS
+ %--------------------------%
+ 
+    config.M = 4;  % Cantidad de niveles de la modulacion
+    config.EbNo_db = 10;
+    %--------------------------%
+    %       REASSIGNMENT
+    %--------------------------%
+
+    fn = fieldnames(i_config_s);
+    for k = 1:numel(fn)
+        if isfield(config,(fn{k}))==1
+            config.(fn{k})= i_config_s.(fn{k});
+        else
+            error("%s: Parametro del simulador no valido", fn{k})
+        end
+    end
+
+    %--------------------------%
+    %         VARIABLES
+    %--------------------------%
+    M = config.M;
+    EbNo_db=config.EbNo_db;
+    %--------------------------%
+    %         PROCESS
+    %--------------------------%
+    % Slicer
+ak_hat = my_slicer(rx, M);
+
+% Theo ber
+ber_theo = berawgn(EbNo_db, 'qam', M);
+
+% Estimated ber
+[ber_sim, n_errors] = my_ber_checker(ak_hat, tx_symbs, M, 'auto');
+
+o_data_s.ber_theo=ber_theo;
+o_data_s.ber_sim=ber_sim;
+
 end
 

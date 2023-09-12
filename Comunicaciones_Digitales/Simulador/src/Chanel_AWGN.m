@@ -4,7 +4,7 @@ function [o_data_s] = Chanel_AWGN(i_config_s,s)
     %     DEFAULT SETTINGS
     %--------------------------%
 
-    config.EdNo_db = 5; 
+    config.EbNo_db = 5; 
     config.M = 4;   % Cantidad de niveles de la modulacion
     config.NOS = 2;  % Cantidad de niveles de la modulacion
     
@@ -25,7 +25,7 @@ function [o_data_s] = Chanel_AWGN(i_config_s,s)
     %         VARIABLES
     %--------------------------%
     
-    EdNo_db = config.EdNo_db;
+    EbNo_db = config.EbNo_db;
     M = config.M;
     NOS = config.NOS;
     %--------------------------%
@@ -35,7 +35,7 @@ function [o_data_s] = Chanel_AWGN(i_config_s,s)
 
 % EbNo to channel snr
 k = log2(M);
-EbNo = 10^(EdNo_db/10);
+EbNo = 10^(EbNo_db/10);
 SNR_slc = EbNo * k;
 SNR_ch = SNR_slc / NOS;
 

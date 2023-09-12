@@ -1,6 +1,6 @@
 
-function [o_data_s] = Reseptor(i_config_s,rx,h)
-%--------------------------%
+function [o_data_s] = Reseptor(i_config_s,r,h)
+    %--------------------------%
     %     DEFAULT SETTINGS
     %--------------------------%
 
@@ -40,7 +40,7 @@ switch filter_type
         f=1;
 end
 h_delay = (n_taps-1)/2;
-ymf = filter(f,1,[rx; zeros(h_delay, 1)]);
+ymf = filter(f,1,[r; zeros(h_delay, 1)]);
 ymf = ymf(1+h_delay:end);
 
 % Downsampling

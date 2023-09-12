@@ -1,7 +1,7 @@
 %-----------------------------------------------------------------------------%
 %                                   FULGOR
 %
-% Programmer(s): Juan Monteros And Matias Mollcker
+% Programmer(s): Francisco G. Rainero 
 % Created on   : 2023
 % Description  : QAM simulator
 %-----------------------------------------------------------------------------%
@@ -89,6 +89,9 @@ close all
         legend({'Salida del Transmisor','Entrada del receptor'},'Location','s')
 
        figure %c
+       NFFT = 1024;
+       WELCH_OVERLAP = 0;
+       fs=config_s.tx_s.BR*config_s.tx_s.NOS;
        [Pxx, f] = pwelch(y, hanning(NFFT/2), WELCH_OVERLAP, NFFT, fs);
        Px_dB= 10*log10(Pxx);
        Px_dB = Px_dB - Px_dB(1); %Normalize Px_dB to get 0dB at f=0, only for plot purposes
@@ -107,14 +110,14 @@ close all
         
        scatterplot(r); %d
        
-      figure; %e
-      histogram(real(r), 'BinMethod', 'auto');
-      title('Histograma de Parte Real antes del Slicer');
+      figure;
+      histogram(Y, 'BinMethod', 'auto');
+      title('Histograma de la señal recibida Y');
       xlabel('Valores');
       ylabel('Frecuencia');
       figure;
-      histogram(imag(r), 'BinMethod', 'auto');
-      title('Histograma de Parte Real antes del Imaginaria');
+      histogram(Y, 'BinMethod', 'auto');
+      title('Histograma de la señal recibida Y');
       xlabel('Valores');
       ylabel('Frecuencia');
         
