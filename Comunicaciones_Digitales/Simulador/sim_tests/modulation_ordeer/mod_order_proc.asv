@@ -44,10 +44,10 @@ end
  tit = sprintf('BER vs M. BR=%.2fGBd', config_s.tx_s.BR/1e9);
 title(tit, 'Interpreter','latex','FontSize', fz);
 xlabel('M', 'Interpreter','latex','FontSize', fz);
-ylabel('BER', 'Interpreter','latex','FontSize', fz);
-%legend({},'Location','no','Interpreter','latex','FontSize', fz-2);
-%set(gcf, 'Position', [50 50 500 500],'Color', 'w');
-saveas(gcf,[out_dir,sprintf('figure.png')]);
+% ylabel('BER', 'Interpreter','latex','FontSize', fz);
+% %legend({},'Location','no','Interpreter','latex','FontSize', fz-2);
+% set(gcf, 'Position', [50 50 500 500],'Color', 'w');
+% %saveas(gcf,[out_dir,sprintf('figure.png')]);
 grid on;
 hold off;
 % figure;
