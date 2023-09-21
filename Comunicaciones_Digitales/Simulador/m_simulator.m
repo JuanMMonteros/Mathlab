@@ -23,7 +23,7 @@ close all
     config_s.tx_s.rolloff = 0.5;                % Rolloff del filtro conformador
     config_s.tx_s.pulse_shaping_ntaps = 201;    % Cantidad de taps del PS
     config_s.tx_s.pulse_shaping_type = 0;       % 0: RRC, 1: RC
-    config_s.ch_awgn.EbNo_db = inf; 
+    config_s.ch_awgn.EbNo_db = 10; 
     config_s.ch_awgn.M =  config_s.tx_s.M;                       % Cantidad de niveles de la modulacion
     config_s.ch_awgn.NOS =  config_s.tx_s.NOS;
     config_s.rx_s.filter_type = 1 ;        % 1: MF, 2: impulso
@@ -125,7 +125,7 @@ close all
     %          OUTPUT
     %--------------------------%
 
-    o_data_s.ber_the = ber_check.ber_theo;
+    o_data_s.ber_theo = ber_check.ber_theo;
     o_data_s.ber_sim = ber_check.ber_sim ;
 
 end

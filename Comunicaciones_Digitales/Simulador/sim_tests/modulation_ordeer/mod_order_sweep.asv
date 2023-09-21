@@ -34,7 +34,7 @@ config_s.en_plots = 0;
 
 %% Sweep
 
-M_v = [4 16];
+M_v = [4 16 64];
 n_M = length(M_v);
 EbNo_v=[8 10 12 14];
 n_EbNo = length(EbNo_v);
@@ -60,4 +60,4 @@ end
 %%
 
 file = [out_dir, 'o_data.mat'];
-save(file, 'out_c','M_v','n_EbNo','config_s');
+save(file, 'out_c','M_v','config_s');
