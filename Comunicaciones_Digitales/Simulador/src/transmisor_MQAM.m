@@ -47,7 +47,7 @@ function [o_data_s] = transmisor_MQAM(i_config_s)
 
     % QAM Symbols generation 
     dec_labels = randi([0 M-1], Lsymbs, 1);
-    tx_symbs = qammod(dec_labels,M);
+    tx_symbs = sqrt(1)*qammod(dec_labels,M);
 
     % Upsampling to change sampling rate
     xup = upsample(tx_symbs, NOS);
@@ -59,7 +59,10 @@ function [o_data_s] = transmisor_MQAM(i_config_s)
         htx = raised_cosine(BR/2, fs, rolloff, pulse_shaping_ntaps, 0);
     end
  
-    s = filter(htx,1,xup);
+    %s = filter(htx,1,xup);
+h_delay = (pulse_shaping_ntaps-1)/2;
+s = filter(htx,1,[xup; zeros(h_delay, 1)]);
+s = s(1+h_delay:end);
 
     clear xup
     
