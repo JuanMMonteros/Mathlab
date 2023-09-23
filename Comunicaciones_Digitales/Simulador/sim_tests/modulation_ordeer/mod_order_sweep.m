@@ -34,9 +34,9 @@ config_s.en_plots = 0;
 
 %% Sweep
 
-M_v = [4 16 64];
+M_v = [4 16];
 n_M = length(M_v);
-EbNo_v=[4 8 10 12];
+EbNo_v=[5 8 10 12];
 n_EbNo = length(EbNo_v);
 
 out_c = cell(n_EbNo, n_M); 
@@ -53,6 +53,7 @@ for idx_M = 1:n_M
     cfg_s.ch_awgn.M = M_v(idx_M);
     cfg_s.ber_s.M = M_v(idx_M);
     cfg_s.ch_awgn.EbNo_db =EbNo_v(idx_EbNo);
+    cfg_s.ber_s.EbNo_db =EbNo_v(idx_EbNo);
     out_c{idx_EbNo,idx_M} = m_simulator(cfg_s);
     end
 

@@ -62,7 +62,7 @@ function [o_data_s] = transmisor_MQAM(i_config_s)
     %s = filter(htx,1,xup);
 h_delay = (pulse_shaping_ntaps-1)/2;
 s = filter(htx,1,[xup; zeros(h_delay, 1)]);
-s = s(1+h_delay:end);
+s =NOS*s(1+h_delay:end);
 
     clear xup
     
