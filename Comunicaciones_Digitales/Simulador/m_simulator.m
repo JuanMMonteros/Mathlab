@@ -23,14 +23,13 @@ close all
     config_s.tx_s.rolloff = 0.5;                % Rolloff del filtro conformador
     config_s.tx_s.pulse_shaping_ntaps = 201;    % Cantidad de taps del PS
     config_s.tx_s.pulse_shaping_type = 0;       % 0: RRC, 1: RC
+    %ch
     config_s.ch_awgn.EbNo_db = 14; 
-    config_s.ch_awgn.M =  config_s.tx_s.M;                       % Cantidad de niveles de la modulacion
-    config_s.ch_awgn.NOS =  config_s.tx_s.NOS;
+    config_s.ch_awgn.ISE = 1; %1 activada, 0 desacticada
+    config_s.ch_awgn.firorder = 17;
+    config_s.ch_awgn.fc = 20e9;
+    %Rx
     config_s.rx_s.filter_type = 1 ;        % 1: MF, 2: impulso
-    config_s.rx_s.NOS =  config_s.tx_s.NOS;
-    config_s.rx_s.ntaps = config_s.tx_s.pulse_shaping_ntaps;
-    config_s.ber_s.M = config_s.tx_s.M;
-    config_s.ber_s.EbNo_db = config_s.ch_awgn.EbNo_db;
        
     
 
@@ -41,6 +40,15 @@ close all
     if nargin > 0
         config_s = overwrite_parameters(i_cfg_s, config_s);
     end
+    %Sharrimg paramiter
+    config_s.ch_awgn.M =  config_s.tx_s.M;                       % Cantidad de niveles de la modulacion
+    config_s.ch_awgn.NOS =  config_s.tx_s.NOS;
+    config_s.ch_awgn.BR =config_s.tx_s.BR;
+    config_s.ch_awgn.rolloff=config_s.tx_s.rolloff;
+    config_s.rx_s.NOS =  config_s.tx_s.NOS;
+    config_s.rx_s.ntaps = config_s.tx_s.pulse_shaping_ntaps;
+    config_s.ber_s.M = config_s.tx_s.M;
+    config_s.ber_s.EbNo_db = config_s.ch_awgn.EbNo_db;
 
     %--------------------------%
     %          PROCESS
@@ -49,6 +57,7 @@ close all
     % -- Tx --
     o_tx_s = transmisor_MQAM(config_s.tx_s);
     % -- CH --
+    %ch_awgn =  Chanel_AWGN_IBN(config_s.ch_awgn,o_tx_s.oversampled_output);
     ch_awgn =  Chanel_AWGN(config_s.ch_awgn,o_tx_s.oversampled_output);
     % -- Rx --
     o_rx_s = Reseptor(config_s.rx_s,ch_awgn.yup_n,o_tx_s.filter);

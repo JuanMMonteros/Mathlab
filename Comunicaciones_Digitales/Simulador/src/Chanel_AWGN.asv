@@ -11,7 +11,6 @@ function [o_data_s] = Chanel_AWGN(i_config_s,s)
     config.firorder=1;
     config.fc=20e9;
     config.BR=32e9;
-    config.rolloff=0.5;
     %--------------------------%
     %       REASSIGNMENT
     %--------------------------%
@@ -36,10 +35,14 @@ function [o_data_s] = Chanel_AWGN(i_config_s,s)
     BR=config.BR;
     fc= config.fc;
     firorder= config.firorder;
-    rolloff=config.rolloff;
     
-    f=(BR+rolloff*BR)/2*NOS;
+    f=BR/2*NOS;
     fc=fc/f;
+    if ISE
+        b=fir1(firorder,fc);
+    else
+        b=1;
+    end
     
     %--------------------------%
     %         PROCESS
@@ -60,14 +63,8 @@ Pn = Ps/SNR_ch;
 n = sqrt(Pn/2) .* (randn(length(s),1) + 1j.*randn(length(s),1));
 
 % Noise addition
-rx = s + n; 
-if ISE
-        b=fir1(firorder,fc);
-    else
-        b=1;
-end
-    
-rx = filter(b,1,rx);
+rx = s + n;
 o_data_s.yup_n=rx; 
 
 end
+

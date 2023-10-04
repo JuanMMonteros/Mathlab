@@ -1,4 +1,4 @@
-function [o_data_s] = Chanel_AWGN(i_config_s,s)
+function [o_data_s] = Chanel_AWGN_IBN(i_config_s,s)
 %CHANEL_AWGN Summary of this function goes here
 %--------------------------%
     %     DEFAULT SETTINGS
@@ -40,6 +40,12 @@ function [o_data_s] = Chanel_AWGN(i_config_s,s)
     
     f=(BR+rolloff*BR)/2*NOS;
     fc=fc/f;
+    if ISE
+        b=fir1(firorder,fc);
+    else
+        b=1;
+    end
+    s = filter(b,1,s);
     
     %--------------------------%
     %         PROCESS
@@ -60,14 +66,8 @@ Pn = Ps/SNR_ch;
 n = sqrt(Pn/2) .* (randn(length(s),1) + 1j.*randn(length(s),1));
 
 % Noise addition
-rx = s + n; 
-if ISE
-        b=fir1(firorder,fc);
-    else
-        b=1;
-end
-    
-rx = filter(b,1,rx);
+rx = s + n;
 o_data_s.yup_n=rx; 
 
 end
+
