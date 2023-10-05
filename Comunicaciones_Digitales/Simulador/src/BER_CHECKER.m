@@ -28,11 +28,13 @@ function [o_data_s] = BER_CHECKER(i_config_s,rx,tx_symbs)
     %--------------------------%
     % Slicer
 ak_hat = my_slicer(rx, M);
+    % salidas del slicer
 
 % Theo ber
 ber_theo = berawgn(EbNo_db, 'qam', M);
 
 % Estimated ber
+% se recomiendo simular hasta contar al menos 100 errores
 [ber_sim, n_errors] = my_ber_checker(ak_hat, tx_symbs/sqrt(1), M, 'auto');
 
 o_data_s.ber_theo=ber_theo;
