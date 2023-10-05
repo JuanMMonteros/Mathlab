@@ -1,4 +1,4 @@
-clear; close all;
+clear
 
 %% Output directory
 
@@ -10,65 +10,54 @@ if ~exist(out_dir,'dir')
     mkdir(out_dir);
 end
 
-file = [out_dir, 'o_data.mat'];
-load(file);
+%% General configuration
 
+% -- General --
+config_s.en_plots = 0;
+
+% -- Tx --
+   config_s.tx_s.BR = 32e9;                    % Baud rate
+    config_s.tx_s.M = 16;                       % Cantidad de niveles de la modulacion
+    config_s.tx_s.NOS = 2;                      % Tasa de sobremuestreo
+    config_s.tx_s.Lsymbs = 1e6;                 % Cantidad de simbolos
+    config_s.tx_s.rolloff = 0.5;                % Rolloff del filtro conformador
+    config_s.tx_s.pulse_shaping_ntaps = 201;    % Cantidad de taps del PS
+    config_s.tx_s.pulse_shaping_type = 0;       % 0: RRC, 1: RC
+    config_s.ch_awgn.EbNo_db = 8; 
+    config_s.ch_awgn.M =  config_s.tx_s.M;                       % Cantidad de niveles de la modulacion
+    config_s.ch_awgn.NOS =  config_s.tx_s.NOS;
+    config_s.rx_s.filter_type = 1 ;        % 1: MF, 2: impulso
+    config_s.rx_s.NOS =  config_s.tx_s.NOS;
+    config_s.rx_s.ntaps = config_s.tx_s.pulse_shaping_ntaps;
+    config_s.ber_s.M = config_s.tx_s.M;
+    config_s.ber_s.EbNo_db = config_s.ch_awgn.EbNo_db; 
+
+%% Sweep
+
+M_v = [4 16 64];
 n_M = length(M_v);
+EbNo_v=[4 8 10 12];
 n_EbNo = length(EbNo_v);
 
-%% Plots
+out_c = cell(n_EbNo, n_M); 
 
-fz = 15;
-
-% BER vs M
-
-ber_theo_v = zeros(n_EbNo,n_M);
-ber_sim_v = zeros(n_EbNo,n_M);
+%% Instantiation
 
 for idx_M = 1:n_M
     
-    M =  M_v(idx_M);
-    for idx_EbNo= 1:n_EbNo
-    ber_theo_v(idx_EbNo,idx_M) = out_c{idx_EbNo,idx_M}.ber_theo;
-   ber_sim_v(idx_EbNo,idx_M)= out_c{idx_EbNo,idx_M}.ber_sim;
+    fprintf('- Running %d/%d ...\n', idx_M,n_M)
+    
+    for idx_EbNo = 1:n_EbNo
+    cfg_s = config_s;
+    cfg_s.tx_s.M = M_v(idx_M);
+    cfg_s.ch_awgn.M = M_v(idx_M);
+    cfg_s.ber_s.M = M_v(idx_M);
+    cfg_s.ch_awgn.EbNo_db =EbNo_v(idx_EbNo);
+    out_c{idx_EbNo,idx_M} = m_simulator(cfg_s);
     end
+
 end
 %%
-figure;
-hold on;
-for idx_M = 1:n_M
-    plot(EbNo_v, ber_theo_v(:,idx_M), 'o-', 'DisplayName', ['bertheo, M = ', num2str(M_v(idx_M))], 'LineWidth', 2);
-    plot(EbNo_v, ber_sim_v(:,idx_M), '--o', 'DisplayName', ['bertheo, M = ', num2str(M_v(idx_M))], 'LineWidth', 2);
-end
-% for idx_EbNo = 1:n_EbNo
-%     plot(M_v, ber_sim_v(idx_EbNo,:), '--o', 'DisplayName', ['bersim, EbNo = ', num2str(EbNo_v(n_EbNo))], 'LineWidth', 1);
-% end
 
-
-tit = sprintf('BER vs EbNo. BR=%.2fGBd', config_s.tx_s.BR/1e9);
-title(tit, 'Interpreter','latex','FontSize', fz);
-xlabel('EbNo', 'Interpreter','latex','FontSize', fz);
-ylabel('BER', 'Interpreter','latex','FontSize', fz);
-legend({},'Location','no','Interpreter','latex','FontSize', fz-2);
-set(gcf, 'Position', [50 50 500 500],'Color', 'w');
-saveas(gcf,[out_dir,sprintf('figure.png')]);
-grid on;
-hold off;
-
-
-
-
-
-
-% figure;
-% p = plot(M_v, ber_theo_v(1), '-o', 'Linewidth', 1);
-% hold on;
-% grid on;
-% plot(EbNo_v, ber_sim_v(1), '--k', 'Linewidth', 1);
-% tit = sprintf('BER vs M. BR=%.2fGBd', config_s.tx_s.BR/1e9);
-% title(tit, 'Interpreter','latex','FontSize', fz);
-% xlabel('M', 'Interpreter','latex','FontSize', fz);
-% ylabel('BER', 'Interpreter','latex','FontSize', fz);
-% %legend({},'Location','no','Interpreter','latex','FontSize', fz-2);
-% set(gcf, 'Position', [50 50 500 500],'Color', 'w');
-% %saveas(gcf,[out_dir,sprintf('figure.png')]);
+file = [out_dir, 'o_data.mat'];
+save(file, 'out_c','M_v','EbNo_v','config_s');
