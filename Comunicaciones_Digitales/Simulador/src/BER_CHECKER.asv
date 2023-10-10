@@ -33,7 +33,7 @@ ak_hat = my_slicer(rx, M);
 L=length(ak_hat);
 % Theo ber
 ber_theo = berawgn(EbNo_db, 'qam', M);
-tx_symbs=tx_symbs(1:end-(phase-1));
+tx
 % Estimated ber
 [ber_sim, n_errors] = my_ber_checker(ak_hat(L/4*3:end), tx_symbs(L/4*3:end), M, 'auto');
 

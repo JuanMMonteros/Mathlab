@@ -68,6 +68,7 @@ n = sqrt(Pn/2) .* (randn(length(s),1) + 1j.*randn(length(s),1));
 % Noise addition
 rx = s + n;
 o_data_s.yup_n=rx; 
+o_data_s.b=b;
 
 end
 

@@ -68,6 +68,7 @@ if ISE
 end
     
 rx = filter(b,1,rx);
-o_data_s.yup_n=rx; 
+o_data_s.yup_n=rx;
+o_data_s.b=b;
 
 end

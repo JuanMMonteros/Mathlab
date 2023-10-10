@@ -99,3 +99,4 @@ for m=1:Lrx
     end
 end
 o_data_s.yk=yk;
+o_data_s.W=W;%Ecualizador convergido
