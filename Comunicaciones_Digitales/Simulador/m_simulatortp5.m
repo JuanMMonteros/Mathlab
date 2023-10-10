@@ -6,7 +6,7 @@
 % Description  : QAM simulator
 %-----------------------------------------------------------------------------%
  
-function o_data_s = m_simulator(i_cfg_s)
+function o_data_s = m_simulatortp5(i_cfg_s)
 close all 
     %--------------------------%
     %     DEFAULT SETTINGS
@@ -17,8 +17,8 @@ close all
 
     % -- Tx --
     config_s.tx_s.BR = 32e9;                    % Baud rate
-    config_s.tx_s.M = 4;                       % Cantidad de niveles de la modulacion
-    config_s.tx_s.NOS = 2;                      % Tasa de sobremuestreo
+    config_s.tx_s.M = 16;                       % Cantidad de niveles de la modulacion
+    config_s.tx_s.NOS = 4;                      % Tasa de sobremuestreo
     config_s.tx_s.Lsymbs = 1e6;                 % Cantidad de simbolos
     config_s.tx_s.rolloff = 0.5;                % Rolloff del filtro conformador
     config_s.tx_s.pulse_shaping_ntaps = 201;    % Cantidad de taps del PS
@@ -30,9 +30,15 @@ close all
     config_s.ch_awgn.fc = 20e9;
     %AGC
     config_s.agc.target = 0.3;
-    %Rx
-    config_s.rx_s.filter_type = 1 ;        % 1: MF, 2: impulso
-       
+    config_s.agc.adc_phase = 1;
+    %Ecualizador Adaptivo
+    config_s.ec_s.ntap = 63; 
+    config_s.ec_s.N =2;        
+    config_s.ec_s.step_cma=2^-11;
+    config_s.ec_s.step_dd=2^-11;
+    config_s.ec_s.tap_leak_gain=1e-4;
+    config_s.ec_s.force_cma_enable=0;
+    
     
 
     %--------------------------%
@@ -51,6 +57,9 @@ close all
     config_s.rx_s.ntaps = config_s.tx_s.pulse_shaping_ntaps;
     config_s.ber_s.M = config_s.tx_s.M;
     config_s.ber_s.EbNo_db = config_s.ch_awgn.EbNo_db;
+    config_s.agc.NOS =  config_s.tx_s.NOS;
+    config_s.agc.N =  config_s.ec_s.N;
+    config_s.ec_s.M =  config_s.tx_s.M; 
 
     %--------------------------%
     %          PROCESS
@@ -61,20 +70,19 @@ close all
     % -- CH --
     %ch_awgn =  Chanel_AWGN_IBN(config_s.ch_awgn,o_tx_s.oversampled_output);
     ch_awgn =  Chanel_AWGN(config_s.ch_awgn,o_tx_s.oversampled_output);
+    %-- AGC --
+    agc = AGC(config_s.agc,ch_awgn.yup_n);
     % -- Rx --
-    o_rx_s = Reseptor(config_s.rx_s,ch_awgn.yup_n,o_tx_s.filter);
+    o_ec_s = Ecualizador(config_s.ec_s,agc.rx_norm,o_tx_s.RCMA);
     % -- slicer y berchequer
-    ber_check = BER_CHECKER(config_s.ber_s,o_rx_s.output_rx,o_tx_s.tx_symbs);
-
-    %--------------------------%
-    %          PLOTS
-    %--------------------------%
-
+    
+    ber_check = BER_CHECKER(config_s.ber_s,o_ec_s.yk,o_tx_s.tx_symbs);
+    
     if config_s.en_plots 
 
        tx_data = o_tx_s.oversampled_output;
        y=ch_awgn.yup_n;
-       r=o_rx_s.output_rx;
+       r=o_ec_s.yk;
 
        
        eyediagram(tx_data(13:23e3), config_s.tx_s.NOS );%a
@@ -116,7 +124,7 @@ close all
        set(gcf, 'Position', [50 50 500 500],'Color', 'w');
        legend({'Entrada del Reseptor','Salida del Receptor'},'Location','s')
         
-      scatterplot(r(13:23e3)); %d
+      scatterplot(r(100e3:101e3)); %d
       
       figure; %e
       histogram(real(r), 'BinMethod', 'auto');
@@ -131,11 +139,7 @@ close all
         
 
     end
-
-    %--------------------------%
-    %          OUTPUT
-    %--------------------------%
-
+    
     o_data_s.ber_theo = ber_check.ber_theo;
     o_data_s.ber_sim = ber_check.ber_sim ;
 

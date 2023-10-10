@@ -28,12 +28,12 @@ function [o_data_s] = BER_CHECKER(i_config_s,rx,tx_symbs)
     %--------------------------%
     % Slicer
 ak_hat = my_slicer(rx, M);
-
+L=length(ak_hat);
 % Theo ber
 ber_theo = berawgn(EbNo_db, 'qam', M);
 
 % Estimated ber
-[ber_sim, n_errors] = my_ber_checker(ak_hat, tx_symbs/sqrt(1), M, 'auto');
+[ber_sim, n_errors] = my_ber_checker(ak_hat(L/4*3:end), tx_symbs(L/4*3:end), M, 'auto');
 
 o_data_s.ber_theo=ber_theo;
 o_data_s.ber_sim=ber_sim;

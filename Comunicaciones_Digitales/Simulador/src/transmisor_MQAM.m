@@ -69,10 +69,11 @@ s =NOS*s(1+h_delay:end);
     %--------------------------%
     %         OUTPUT
     %--------------------------%
+    RCMA = sqrt(mean(abs(tx_symbs(1:1000)).^4)/mean(abs(tx_symbs(1:1000)).^2));
 
     o_data_s.oversampled_output = s;
     o_data_s.filter = htx;
     o_data_s.tx_symbs = tx_symbs;
-        
+    o_data_s.RCMA = RCMA;
 end
 
