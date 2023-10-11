@@ -17,17 +17,17 @@ close all
 
     % -- Tx --
     config_s.tx_s.BR = 32e9;                    % Baud rate
-    config_s.tx_s.M = 16;                       % Cantidad de niveles de la modulacion
-    config_s.tx_s.NOS = 2;                      % Tasa de sobremuestreo
+    config_s.tx_s.M = 4;                       % Cantidad de niveles de la modulacion
+    config_s.tx_s.NOS = 4;                      % Tasa de sobremuestreo
     config_s.tx_s.Lsymbs = 1e6;                 % Cantidad de simbolos
     config_s.tx_s.rolloff = 0.5;                % Rolloff del filtro conformador
     config_s.tx_s.pulse_shaping_ntaps = 201;    % Cantidad de taps del PS
     config_s.tx_s.pulse_shaping_type = 0;       % 0: RRC, 1: RC
     %ch
-    config_s.ch_awgn.EbNo_db = 14; 
+    config_s.ch_awgn.EbNo_db =3; 
     config_s.ch_awgn.ISE = 1; %1 activada, 0 desacticada
     config_s.ch_awgn.firorder = 17;
-    config_s.ch_awgn.fc = 20e9;
+    config_s.ch_awgn.fc = 16e9;
     %AGC
     config_s.agc.target = 0.3;
     config_s.agc.adc_phase = 1;
@@ -36,7 +36,7 @@ close all
     config_s.ec_s.N =2;        
     config_s.ec_s.step_cma=2^-11;
     config_s.ec_s.step_dd=2^-11;
-    config_s.ec_s.tap_leak_gain=1e-4;
+    config_s.ec_s.tap_leak_gain=1e-10;
     config_s.ec_s.force_cma_enable=0;
     
     
@@ -95,30 +95,25 @@ title('Parte Imaginaria')
  %1.b Respues en Frecuencia del canal y del ecualizador y la convolucion de los
  %mismo 
      figure %b
-      WELCH_OVERLAP = 0;
+
+      NFFT=1024;
       fs=config_s.tx_s.BR*config_s.tx_s.NOS;
-      [Pxx, f] = pwelch(Chanel_F, hanning(config_s.ch_awgn.firorder/2), WELCH_OVERLAP, config_s.ch_awgn.firorder, fs);
-       Px_dB= 10*log10(Pxx);
-       Px_dB = Px_dB - Px_dB(1); %Normalize Px_dB to get 0dB at f=0, only for plot purposes
-       plot(f/1e9, Px_dB,'-b', 'Linewidth',2)
-       grid on
-       hold on 
-       [Pxx, f] = pwelch(FSE, hanning(config_s.ec_s.ntap/2), WELCH_OVERLAP, config_s.ec_s.ntap, fs);
-       Px_dB= 10*log10(Pxx);
-       Px_dB = Px_dB - Px_dB(1); %Normalize Px_dB to get 0dB at f=0, only for plot purposes
-       plot(f/1e9, Px_dB,'-r', 'Linewidth',2)
-       A=conv(FSE,Chanel_F);
-       [Pxx, f] = pwelch(A, hanning(config_s.ec_s.ntap/2), WELCH_OVERLAP,config_s.ec_s.ntap, fs);
-        Px_dB= 10*log10(Pxx);
-        Px_dB = Px_dB - Px_dB(1); %Normalize Px_dB to get 0dB at f=0, only for plot purposes
-        plot(f/1e9, Px_dB,'-g', 'Linewidth',2)
-%         [Pxx, f] = pwelch(conv(H,A), hanning(config_s.tx_s.pulse_shaping_ntaps/2), WELCH_OVERLAP,config_s.tx_s.pulse_shaping_ntaps, fs);
-%         Px_dB= 10*log10(Pxx);
-%         Px_dB = Px_dB - Px_dB(1); %Normalize Px_dB to get 0dB at f=0, only for plot purposes
-%         plot(f/1e9, Px_dB,'--k', 'Linewidth',2)
+      CH =fftshift(fft(Chanel_F, NFFT));
+      CH=CH/CH(NFFT/2);
+      f=[-fs/2:fs/NFFT:fs/2-fs/(NFFT)];
+      plot(f/1e9, 20*log10(abs(CH)), '--k', 'LineWidth',2);
+      grid on
+      hold on
+      EC =fftshift(fft(FSE, NFFT));
+      EC=EC/EC(NFFT/2);
+      plot(f/1e9, 20*log10(abs(EC)),'-r', 'Linewidth',2);
+      A = fftshift(fft(conv(FSE,Chanel_F), NFFT));
+      A=A/A(NFFT/2);
+      plot(f/1e9, 20*log10(abs(A)),'-g', 'Linewidth',2);
+       
        xlabel('Frequency [GHz]')
        ylabel('PSD Magnitude ')
-       xlim([0,fs/(2*1e9)]);
+       ylim([-100,20]);
        title('Respuesta En Frecuencia')
        set(gcf, 'Position', [50 50 500 500],'Color', 'w');
        legend({'Respuesta del canal','Respusta del Ecualizador','Respuesta de La convolucion'},'Location','s') 

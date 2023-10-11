@@ -13,7 +13,7 @@ end
 file = [out_dir, 'o_data.mat'];
 load(file);
 
-n_M = length(M_v);
+n_fc = length(fc_v);
 n_EbNo = length(EbNo_v);
 
 %% Plots
@@ -22,24 +22,25 @@ fz = 15;
 
 % BER vs M
 
-ber_theo_v = zeros(n_EbNo,n_M);
-ber_sim_v = zeros(n_EbNo,n_M);
+ber_theo_v = zeros(n_EbNo,n_fc);
+ber_sim_v = zeros(n_EbNo,n_fc);
 
-for idx_M = 1:n_M
+for idx_fc = 1:n_fc
     
-    M =  M_v(idx_M);
+    Fc =  fc_v(idx_fc);
     for idx_EbNo= 1:n_EbNo
-    ber_theo_v(idx_EbNo,idx_M) = out_c{idx_EbNo,idx_M}.ber_theo;
-   ber_sim_v(idx_EbNo,idx_M)= out_c{idx_EbNo,idx_M}.ber_sim;
+    ber_theo_v(idx_EbNo,idx_fc) = out_c{idx_EbNo,idx_fc}.ber_theo;
+   ber_sim_v(idx_EbNo,idx_fc)= out_c{idx_EbNo,idx_fc}.ber_sim;
     end
 end
 %%
 figure;
-hold on;
-for idx_M = 1:n_M
-    plot(EbNo_v, ber_theo_v(:,idx_M), 'o-', 'DisplayName', ['bertheo, M = ', num2str(M_v(idx_M))], 'LineWidth', 2);
-    plot(EbNo_v, ber_sim_v(:,idx_M), '--o', 'DisplayName', ['bertheo, M = ', num2str(M_v(idx_M))], 'LineWidth', 2);
+for idx_fc = 1:n_fc
+semilogy(EbNo_v, ber_theo_v(:,idx_fc), 'o-', 'DisplayName', ['bertheo, M = ', num2str(fc_v(idx_fc))], 'LineWidth', 2);
+hold on
+semilogy(EbNo_v, ber_sim_v(:,idx_fc), '--o', 'DisplayName', ['bersim, M = ', num2str(fc_v(idx_fc))], 'LineWidth', 2);
 end
+
 % for idx_EbNo = 1:n_EbNo
 %     plot(M_v, ber_sim_v(idx_EbNo,:), '--o', 'DisplayName', ['bersim, EbNo = ', num2str(EbNo_v(n_EbNo))], 'LineWidth', 1);
 % end
@@ -53,7 +54,7 @@ legend({},'Location','no','Interpreter','latex','FontSize', fz-2);
 set(gcf, 'Position', [50 50 500 500],'Color', 'w');
 saveas(gcf,[out_dir,sprintf('figure.png')]);
 grid on;
-hold off;
+hold on;
 
 
 
