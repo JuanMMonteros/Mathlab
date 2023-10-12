@@ -5,7 +5,7 @@ function [o_data_s] = Ecualizador(i_config_s,rx_norm,RCMA)
 %--------------------------%
 %% ECUALIZADOR FSE 
 % Vamos a empezar solo con DD (slicer) sin FCR (carrier recovery)
-config.NTAPS = 63; % Por comodidad impar
+config.ntaps = 63; % Por comodidad impar
 config.step_cma = 2^-11;%2e-3;
 config.step_dd = 2^(-9);
 config.tap_leak_gain = 1e-4;%1e-3;
@@ -17,12 +17,12 @@ config.M=4;
  %       REASSIGNMENT
  %--------------------------%
 
-    fn = fieldnames(i_config_s);
+   fn = fieldnames(i_config_s);
     for k = 1:numel(fn)
         if isfield(config,(fn{k}))==1
             config.(fn{k})= i_config_s.(fn{k});
         else
-            %error("%s: Parametro del simulador no valido", fn{k})
+            fprintf("%s: Parametro del simulador no valido", fn{k})
         end
     end
 
@@ -30,7 +30,7 @@ config.M=4;
     %--------------------------%
     %         VARIABLES
     %--------------------------%
-NTAPS=config.NTAPS;
+NTAPS=config.ntaps;
 step_cma=config.step_cma; 
 step_dd=config.step_dd;
 tap_leak_gain=config.tap_leak_gain; 
@@ -100,3 +100,4 @@ for m=1:Lrx
 end
 o_data_s.yk=yk;
 o_data_s.W=W;%Ecualizador convergido
+o_data_s.coeffs=coeffs;%Ecualizador convergido

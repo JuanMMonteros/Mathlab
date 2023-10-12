@@ -35,21 +35,21 @@ for idx_fc = 1:n_fc
 end
 %%
 figure;
-for idx_fc = 1:n_fc
-semilogy(EbNo_v, ber_theo_v(:,idx_fc), 'o-', 'DisplayName', ['bertheo, M = ', num2str(fc_v(idx_fc))], 'LineWidth', 2);
+semilogy(EbNo_v, ber_theo_v(:,1), '--o', 'DisplayName', ['bertheo'], 'LineWidth', 2);
 hold on
-semilogy(EbNo_v, ber_sim_v(:,idx_fc), '--o', 'DisplayName', ['bersim, M = ', num2str(fc_v(idx_fc))], 'LineWidth', 2);
+for idx_fc = 1:n_fc
+semilogy(EbNo_v, ber_sim_v(:,idx_fc), 'o-', 'DisplayName', ['bersim, FC(GHz) = ', num2str(fc_v(idx_fc)/1e9)], 'LineWidth', 2);
 end
 
 % for idx_EbNo = 1:n_EbNo
 %     plot(M_v, ber_sim_v(idx_EbNo,:), '--o', 'DisplayName', ['bersim, EbNo = ', num2str(EbNo_v(n_EbNo))], 'LineWidth', 1);
 % end
 
-
-tit = sprintf('BER vs EbNo. BR=%.2fGBd', config_s.tx_s.BR/1e9);
+tit = sprintf('BER vs EbNo EJ2. BR=%.2fGBd', config_s.tx_s.BR/1e9);
 title(tit, 'Interpreter','latex','FontSize', fz);
 xlabel('EbNo', 'Interpreter','latex','FontSize', fz);
 ylabel('BER', 'Interpreter','latex','FontSize', fz);
+ylim([1e-4,0.1]);
 legend({},'Location','no','Interpreter','latex','FontSize', fz-2);
 set(gcf, 'Position', [50 50 500 500],'Color', 'w');
 saveas(gcf,[out_dir,sprintf('figure.png')]);

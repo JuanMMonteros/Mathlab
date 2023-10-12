@@ -168,7 +168,7 @@ f = -fs/2:fstep:fs/2-fstep;
 figure
 plot(f, abs(fftshift(fft(W,NFFT))));
 title('Modulo de la rta. en fcia. del FFE')
-
+%%
 figure
 mse = abs(error).^2;
 mse = filter(ones(1e3,1)./1e3, 1, mse);
