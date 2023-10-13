@@ -1,7 +1,7 @@
 %-----------------------------------------------------------------------------%
 %                                   FULGOR
 %
-% Programmer(s): Juan Monteros And Matias Mollcker
+% Programmer(s): Juan Monteros And Matias Mollecker
 % Created on   : 2023
 % Description  : QAM simulator
 %-----------------------------------------------------------------------------%
@@ -86,12 +86,19 @@ close all
     
 %Respuesta al impulso del FFE
 figure %1.A
-subplot 211
+subplot(2,1,1) 
 stem(real(FSE))
 title('Parte Real')
-subplot 212
+xlabel('Frequency [GHz]') 
+ylabel('Amplitude [dB]')
+
+subplot(2,1,2) 
 stem(imag(FSE))
 title('Parte Imaginaria')
+xlabel('Frequency [GHz]') 
+ylabel('Amplitude [dB]')
+ylim([-1e-3, 1e-3])
+
  %1.b Respues en Frecuencia del canal y del ecualizador y la convolucion de los
  %mismo 
      figure %b
