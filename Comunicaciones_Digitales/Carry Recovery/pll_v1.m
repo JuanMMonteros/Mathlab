@@ -1,0 +1,110 @@
+close all
+clear all 
+
+%% Parametros del simulador
+BR = 16e9; 
+T = 1/BR;
+Kp = 0.02;
+%Ki = 0;       % PLL Tipo 1
+Ki = Kp/1000; % PLL Tipo 2
+Lat = 50; % Latencia
+L = 50e3; % Longitud de simulacion
+
+%% Generacion de la entrada
+input = 'Sine'
+switch(input)
+    case 'Step'
+        tita0 = 20; %Grados
+        tita_in = tita0/180*pi*ones(L,1);
+    case 'Ramp'
+        f0 = 200e6; %Hz
+        w0 = 2*pi*f0;
+        t = [0:L-1].*T;
+        tita_in = w0.*t;
+    case 'Sine'
+        fn = 90e6;
+        wn = 2*pi*fn;
+        tita0 = 15; %Grados
+        t = [0:L-1].*T;
+        tita_in = 15/180*pi * sin(wn.*t);
+end
+
+%% Modelado del PLL
+error = zeros(L,1);
+error_prop = zeros(L,1);
+error_int = zeros(L,1);
+nco_in = zeros(L,1);
+tita_out = zeros(L,1);
+tita_delay = zeros(L,1);
+
+DELAY_LINE = zeros(Lat+1,1); % FIFO para modelar la latencia
+
+for n=2:L
+    error(n) = tita_in(n) - tita_delay(n-1);
+    error_prop(n) = Kp*error(n);
+    
+    % Calculo del error integral
+    % Poco eficiente
+    % if n<=1
+    %     error_int(n) = Ki*error(n);
+    % else
+    %     error_int(n) = error_int(n-1)+Ki*error(n);
+    % end
+    % Mas eficiente es arrancar el for desde 2
+    error_int(n) = error_int(n-1)+Ki*error(n);
+    nco_in(n) = error_prop(n)+error_int(n);
+    tita_out(n) = tita_out(n-1)+nco_in(n);
+    
+    % Modelado del retardo
+    % Asumo que los datos entran por el final y salen por el frente
+    % Primero roto, luego cargo el nuevo valor al final
+    DELAY_LINE = [DELAY_LINE(2:end); tita_out(n)]; 
+    % Finalmente, logueo la senial retardada
+    tita_delay(n) = DELAY_LINE(1); 
+end
+
+%% Plots
+
+t = [0:L-1].*T;
+
+% Plot respuesta a la entrada
+figure
+plot(t, tita_in, '--b')
+hold all
+plot(t, tita_out, '-r', 'Linewidth',2);
+xlabel('Time [s]')
+ylabel('Amplitudes [rad]')
+grid on
+legend('Input', 'Output')
+title('Response to input')
+
+% Error estacionario
+figure
+plot(t, error, '-b', 'Linewidth',2)
+hold all
+xlabel('Time [s]')
+ylabel('Amplitude [rad]')
+grid on
+title('System Error Evolution')
+
+
+% Errores 
+figure
+plot(t, error_prop, '-b', 'Linewidth',2)
+hold all
+plot(t, error_int, '-r', 'Linewidth',2)
+plot(t, nco_in, '-g', 'Linewidth',2)
+
+xlabel('Time [s]')
+ylabel('Amplitude [rad]')
+grid on
+legend('Error Prop.', 'Error Int.', 'NCO In')
+title('Proporcional and Integral Error')
+
+% Error Integral escalado 
+figure
+plot(t, error_int*BR/2/pi, '-r', 'Linewidth',2)
+xlabel('Time [s]')
+ylabel('Frequency [Hz]')
+grid on
+title('Carrier Offset in Integrator Branch')
