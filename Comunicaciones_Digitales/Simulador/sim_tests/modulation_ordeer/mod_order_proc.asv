@@ -35,12 +35,11 @@ for idx_fc = 1:n_fc
 end
 %%
 figure;
-semilogy(EbNo_v, ber_sim_v(:,1), 'r-', 'DisplayName', ['bersim, FC(GHz) = ', num2str(fc_v(1)/1e9)], 'LineWidth', 2);
-hold on;
-semilogy(EbNo_v, ber_sim_v(:,2), '--r', 'DisplayName', ['bersim, FC(GHz) = ', num2str(fc_v(2)/1e9)], 'LineWidth', 2);
-semilogy(EbNo_v, ber_sim_v(:,3), 'b-', 'DisplayName', ['bersim, FC(GHz) = ', num2str(fc_v(3)/1e9)], 'LineWidth', 2);
-semilogy(EbNo_v, ber_sim_v(:,4), '--b', 'DisplayName', ['bersim, FC(GHz) = ', num2str(fc_v(4)/1e9)], 'LineWidth', 2);
-
+%semilogy(EbNo_v, ber_theo_v(:,1), '--o', 'DisplayName', ['bertheo'], 'LineWidth', 2);
+hold on
+for idx_fc = 1:n_fc
+semilogy(EbNo_v, ber_sim_v(:,idx_fc), 'o-', 'DisplayName', ['bersim, FC(GHz) = ', num2str(fc_v(idx_fc)/1e9)], 'LineWidth', 2);
+end
 
 % for idx_EbNo = 1:n_EbNo
 %     plot(M_v, ber_sim_v(idx_EbNo,:), '--o', 'DisplayName', ['bersim, EbNo = ', num2str(EbNo_v(n_EbNo))], 'LineWidth', 1);

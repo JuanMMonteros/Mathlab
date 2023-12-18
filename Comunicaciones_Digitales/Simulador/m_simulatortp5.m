@@ -24,7 +24,7 @@ close all
     config_s.tx_s.pulse_shaping_ntaps = 201;    % Cantidad de taps del PS
     config_s.tx_s.pulse_shaping_type = 0;       % 0: RRC, 1: RC
     %ch
-    config_s.ch_awgn.EbNo_db =10; 
+    config_s.ch_awgn.EbNo_db =3; 
     config_s.ch_awgn.ISE = 1; %1 activada, 0 desacticada
     config_s.ch_awgn.firorder = 17;
     config_s.ch_awgn.fc = 20e9;

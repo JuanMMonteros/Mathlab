@@ -40,29 +40,29 @@ end
     config_s.ec_s.force_cma_enable=0;
     %% Sweep
 
-fc_v = [16e9 18e9 20e9 24e9];
-n_fc = length(fc_v);
+taps_v = [1 5 31 63];
+n_taps = length(taps_v);
 EbNo_v=[0 3 4 5 6 8 10 14];
 n_EbNo = length(EbNo_v);
 
-out_c = cell(n_EbNo, n_fc); 
+out_c = cell(n_EbNo, n_taps); 
 
 %% Instantiation
 
-for idx_fc = 1:n_fc
+for idx_taps = 1:n_taps
     
-    fprintf('- Running %d/%d ...\n', idx_fc,n_fc)
+    fprintf('- Running %d/%d ...\n', idx_taps,n_taps)
     
     parfor idx_EbNo = 1:n_EbNo
     cfg_s = config_s;
     cfg_s.ch_awgn.EbNo_db =EbNo_v(idx_EbNo);
-    cfg_s.ch_awgn.fc =fc_v(idx_fc);
-    out_c{idx_EbNo,idx_fc} = m_simulatortp5(cfg_s);
-    fprintf('/////- bertheo %d \n - bersim %d \n', out_c{idx_EbNo,idx_fc}.ber_theo,out_c{idx_EbNo,idx_fc}.ber_sim)
+    cfg_s.ec_s.ntaps =taps_v(idx_taps);
+    out_c{idx_EbNo,idx_taps} = m_simulatortp5(cfg_s);
+    fprintf('/////- bertheo %d \n - bersim %d \n', out_c{idx_EbNo,idx_taps}.ber_theo,out_c{idx_EbNo,idx_taps}.ber_sim)
     end
 
 end
 %%
 
 file = [out_dir, 'o_data.mat'];
-save(file, 'out_c','fc_v','EbNo_v','config_s');
+save(file, 'out_c','taps_v','EbNo_v','config_s');
