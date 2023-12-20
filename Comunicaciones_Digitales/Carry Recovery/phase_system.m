@@ -33,7 +33,5 @@ figure
 pzmap(H)
 
 %%
-figure
-bode(H)
-hold all
+
 
