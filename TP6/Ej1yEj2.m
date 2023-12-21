@@ -6,7 +6,7 @@ Ts = 1/fs;
 z = tf('z', Ts);
 
 %%EJ1,
-L = 100000; % Simulation Length
+L = 100000; % Simulation Length/////////
 t = [0:L-1].*Ts;
 
 % System modelling
@@ -92,7 +92,7 @@ set(h, 'LineWidth', 2); % Establece el ancho de línea a 2 (o tu valor deseado)
 grid on % Muestra la cuadrícula en el gráfico
 %% Ej2-b
 Kp = 0.05;
-Ki = 0;
+Ki = Kp/1000;
 
 H0 = Kp + Ki*z/(z-1);
 NCO = z/(z-1);
@@ -105,7 +105,6 @@ step(z/(z-1))
 h = findall(gcf,'type','line'); % Obtiene todas las líneas en la figura actual
 set(h, 'LineWidth', 2); % Establece el ancho de línea a 2 (o tu valor deseado)
 grid on % Muestra la cuadrícula en el gráfico
-
 % Ej2-a
 Kp = 0.005;
 Ki = 0;
@@ -140,7 +139,7 @@ grid on % Muestra la cuadrícula en el gráfico
 
 %% Ej2-c
 Kp = 0.05;
-Ki = 0,
+Ki = Kp/1000;
 
 H0 = Kp + Ki*z/(z-1);
 NCO = z/(z-1);
@@ -213,3 +212,120 @@ h = findall(gcf,'type','line'); % Obtiene todas las líneas en la figura actual
 set(h, 'LineWidth', 2); % Establece el ancho de línea a 2 (o tu valor deseado)
 grid on % Muestra la cuadrícula en el gráfico
 
+%%
+% Ej3-1b=
+Kp = 0.05;
+Ki = Kp/100;
+
+H0 = Kp + Ki*z/(z-1);
+NCO = z/(z-1);
+H = feedback(H0*NCO,z^-0);
+figure
+step(H)
+% Ajusta el ancho de línea después de generar la gráfica
+h = findall(gcf,'type','line'); % Obtiene todas las líneas en la figura actual
+set(h, 'LineWidth', 2); % Establece el ancho de línea a 2 (o tu valor deseado)
+grid on % Muestra la cuadrícula en el gráfico
+
+Ki = Kp/1000;
+
+H0 = Kp + Ki*z/(z-1);
+NCO = z/(z-1);
+H = feedback(H0*NCO,z^-0);
+figure
+step(H)
+% Ajusta el ancho de línea después de generar la gráfica
+h = findall(gcf,'type','line'); % Obtiene todas las líneas en la figura actual
+set(h, 'LineWidth', 2); % Establece el ancho de línea a 2 (o tu valor deseado)
+grid on % Muestra la cuadrícula en el gráfico
+
+Ki = Kp/10000;
+
+H0 = Kp + Ki*z/(z-1);
+NCO = z/(z-1);
+H = feedback(H0*NCO,z^-0);
+
+figure
+step(H)
+% Ajusta el ancho de línea después de generar la gráfica
+h = findall(gcf,'type','line'); % Obtiene todas las líneas en la figura actual
+set(h, 'LineWidth', 2); % Establece el ancho de línea a 2 (o tu valor deseado)
+grid on % Muestra la cuadrícula en el gráfico
+
+%% Ej3-b
+Kp = 0.05;
+Ki = Kp/1000;
+
+H0 = Kp + Ki*z/(z-1);
+NCO = z/(z-1);
+H = feedback(H0*NCO,z^-0);
+figure
+step(H*z/(z-1))
+hold all
+step(z/(z-1))
+% Ajusta el ancho de línea después de generar la gráfica
+h = findall(gcf,'type','line'); % Obtiene todas las líneas en la figura actual
+set(h, 'LineWidth', 2); % Establece el ancho de línea a 2 (o tu valor deseado)
+grid on % Muestra la cuadrícula en el gráfico
+
+%% Ej3-c
+Kp = 0.5;
+Ki = Kp/10000;
+
+H0 = Kp + Ki*z/(z-1);
+NCO = z/(z-1);
+H = feedback(H0*NCO,z^-0);
+figure
+bode(H, bodeopts); % Utiliza las opciones personalizadas
+% Ajusta el ancho de línea después de generar la gráfica
+h = findall(gcf,'type','line'); % Obtiene todas las líneas en la figura actual
+set(h, 'LineWidth', 2); % Establece el ancho de línea a 2 (o tu valor deseado)
+grid on % Muestra la cuadrícula en el gráfico
+
+
+Kp = 0.05;
+Ki = Kp/1000;
+
+figure
+bode(H, bodeopts); % Utiliza las opciones personalizadas
+% Ajusta el ancho de línea después de generar la gráfica
+h = findall(gcf,'type','line'); % Obtiene todas las líneas en la figura actual
+set(h, 'LineWidth', 2); % Establece el ancho de línea a 2 (o tu valor deseado)
+grid on % Muestra la cuadrícula en el gráfico
+
+
+Kp = 0.5;
+Ki = Kp/1;
+
+H0 = Kp + Ki*z/(z-1);
+NCO = z/(z-1);
+H = feedback(H0*NCO,z^-0);
+
+figure
+bode(H, bodeopts); % Utiliza las opciones personalizadas
+% Ajusta el ancho de línea después de generar la gráfica
+h = findall(gcf,'type','line'); % Obtiene todas las líneas en la figura actual
+set(h, 'LineWidth', 2); % Establece el ancho de línea a 2 (o tu valor deseado)
+grid on % Muestra la cuadrícula en el gráfico
+
+%%
+%3D
+Kp = 0.5;
+Ki = Kp/10000;
+
+H0 = Kp + Ki*z/(z-1);
+NCO = z/(z-1);
+H = feedback(H0*NCO,z^-0);
+figure
+pzmap(H); % Marcador 'o' para los ceros
+hold on;
+
+Kp = 0.5;
+Ki = Kp/1;
+
+H0 = Kp + Ki*z/(z-1);
+NCO = z/(z-1);
+H = feedback(H0*NCO,z^-0);
+pzmap(H); % Marcador 'x' para los polos
+
+legend('Ceros (o)', 'Polos (x)'); % Agrega leyendas para cada conjunto de marcadores
