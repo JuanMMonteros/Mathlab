@@ -308,24 +308,3 @@ h = findall(gcf,'type','line'); % Obtiene todas las líneas en la figura actual
 set(h, 'LineWidth', 2); % Establece el ancho de línea a 2 (o tu valor deseado)
 grid on % Muestra la cuadrícula en el gráfico
 
-%%
-%3D
-Kp = 0.5;
-Ki = Kp/10000;
-
-H0 = Kp + Ki*z/(z-1);
-NCO = z/(z-1);
-H = feedback(H0*NCO,z^-0);
-figure
-pzmap(H); % Marcador 'o' para los ceros
-hold on;
-
-Kp = 0.5;
-Ki = Kp/1;
-
-H0 = Kp + Ki*z/(z-1);
-NCO = z/(z-1);
-H = feedback(H0*NCO,z^-0);
-pzmap(H); % Marcador 'x' para los polos
-
-legend('Ceros (o)', 'Polos (x)'); % Agrega leyendas para cada conjunto de marcadores
