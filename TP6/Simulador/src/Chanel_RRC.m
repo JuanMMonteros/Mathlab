@@ -78,14 +78,14 @@ Pn = Ps/SNR_ch;
 n = sqrt(Pn/2) .* (randn(length(s),1) + 1j.*randn(length(s),1));
 
 % Noise addition
-rx_noisy = s + n; 
-% if ISE
-%         b=fir1(firorder,fc);
-%     else
-%         b=1;
-% end
-%     
-% rx_noisy = filter(b,1,rx);
+rx = s + n; 
+ if ISE
+         b=fir1(firorder,fc);
+         rx_noisy = filter(b,1,rx);
+     else
+         rx_noisy = rx;
+ end
+     
 
 % Agregar efectos de portadora
 Ldata= length(rx_noisy);
@@ -101,6 +101,7 @@ phase_noise = cumsum(freq_noise); % Proceso de Wiener
 osc_pn = exp(1j.*phase_noise);
 phase_tone = exp(1j.*phase_tone_amp.*sin(2*pi*phase_tone_freq.*time));
 rxs = rx_noisy.*lo_offset.*phase_offset.*osc_pn.*freq_fluctuations.*phase_tone;
+%rxs =rx_noisy.*lo_offset.*phase_offset.*osc_pn;
 
 o_data_s.yup_n=rxs;
 o_data_s.phase_noise = phase_noise;

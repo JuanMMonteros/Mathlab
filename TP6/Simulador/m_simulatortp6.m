@@ -6,7 +6,7 @@
 % Description  : RRC simulator
 %-----------------------------------------------------------------------------%
  
-function o_data_s = m_simulatortp5(i_cfg_s)
+function o_data_s = m_simulatortp6(i_cfg_s)
 close all 
     %--------------------------%
     %     DEFAULT SETTINGS
@@ -22,12 +22,12 @@ close all
     config_s.tx_s.BR = 32e9;                    % Baud rate
     config_s.tx_s.M = 4;                       % Cantidad de niveles de la modulacion
     config_s.tx_s.NOS = 1;                      % Tasa de sobremuestreo
-    config_s.tx_s.Lsymbs = 10e3;                 % Cantidad de simbolos
+    config_s.tx_s.Lsymbs = 1e6;                 % Cantidad de simbolos
     config_s.tx_s.rolloff = 0.5;                % Rolloff del filtro conformador
     config_s.tx_s.pulse_shaping_ntaps = 201;    % Cantidad de taps del PS
     config_s.tx_s.pulse_shaping_type = 0;       % 0: RRC, 1: RC
     %---ch---
-    config_s.ch_awgn.EbNo_db =20; 
+    config_s.ch_awgn.EbNo_db =10; 
     config_s.ch_awgn.ISE = 0; %1 activada, 0 desacticada
     config_s.ch_awgn.firorder = 17;
     config_s.ch_awgn.fc = 20e9;
@@ -73,9 +73,15 @@ close all
     %--PLL RX--
     rx_s = RX_RCC(config_s.rx_s,ch_awgn.yup_n);
     %--Ber Cheker--
-    config_s.ber_.Ldata=rx_s.Ldata;
     ber_check = BER_CHECKER(config_s.ber_s,o_tx_s.tx_symbs,rx_s.pll_output,rx_s.ak_hat);
-    
+%     i_ber_s.M = config_s.tx_s.M;
+%     i_ber_s.EbNo_dB = config_s.ch_awgn.EbNo_db;
+%     i_ber_s.xsymb = o_tx_s.tx_symbs;
+%     i_ber_s.ak_hat = rx_s.ak_hat;
+%     i_ber_s.pll_output = rx_s.pll_output;
+%     i_ber_s.Ldata = rx_s.Ldata;
+% 
+%     ber_check = BerCheck(i_ber_s);
     if config_s.en_plots
      % -- Tx -- %
         xsymb = o_tx_s.tx_symbs; 

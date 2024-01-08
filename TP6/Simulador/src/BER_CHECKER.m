@@ -1,11 +1,10 @@
-function [o_data_s] = BER_CHECKER(i_config_s,xsymb,pll_output,ak_hat)
+function [o_data_s] = BER_CHECKER(i_config_s,tx_symbs,pll_output,ak_hat)
 %--------------------------%
 %     DEFAULT SETTINGS
  %--------------------------%
  
     config.M = 4;  % Cantidad de niveles de la modulacion
     config.EbNo_db = 10;
-    config.Ldata =1e6;
     %--------------------------%
     %       REASSIGNMENT
     %--------------------------%
@@ -24,17 +23,20 @@ function [o_data_s] = BER_CHECKER(i_config_s,xsymb,pll_output,ak_hat)
     %--------------------------%
     M = config.M;
     EbNo_dB=config.EbNo_db;
-    Ldata = config.Ldata;
+    Ldata = length(pll_output);
     %--------------------------%
     %         PROCESS
     %--------------------------%
+ %--------------------------%
+    %          PROCESS
+    %--------------------------%
     % 1. Alinear
-    d0 = finddelay(xsymb, pll_output);
+    d0 = finddelay(tx_symbs, pll_output);
     guard0 = fix(Ldata*.25);
-    guard1 = 1e30;
+    guard1 = 1e3;
     a_hat_align = ak_hat (1+d0+guard0:end-guard1);
     pll_output_align = pll_output (1+d0+guard0:end-guard1);
-    x_align = xsymb (1+guard0:end-guard1-d0);
+    x_align = tx_symbs (1+guard0:end-guard1-d0);
     
     % 2. OPCION 1 (millenial, facil)
     simbolos_totales = length(x_align);
@@ -94,8 +96,8 @@ function [o_data_s] = BER_CHECKER(i_config_s,xsymb,pll_output,ak_hat)
     end
     
     figure
-     plot(cs_phase/(pi/2))
-     ylim([-2,2])
+    plot(cs_phase/(pi/2))
+    ylim([-2,2])
     
     Ldata = length(orx_cs_fixed);
     orx_cs_fixed_slicer = zeros(Ldata,1);
@@ -109,6 +111,7 @@ function [o_data_s] = BER_CHECKER(i_config_s,xsymb,pll_output,ak_hat)
     aprox_ber_corrigiendo_cs = 1/log2(M) * symbol_error_rate;
     
     ber_theo = berawgn(EbNo_dB, 'qam', M);
+
 
     %--------------------------%
     %         OUTPUT
