@@ -14,7 +14,7 @@ M=16;
 EbNo_dB = 15; % dB
 
 % Parametros de la portadora
-delta_freq = 0e6; % Offset del LO
+delta_freq = 10e6; % Offset del LO
 LW = 00e3; % Ancho de linea [Hz]
 theta0 = 0/180*pi; % Fase inicial
 frequency_fluctuations_amp = 0e6;
@@ -204,6 +204,6 @@ end
 simbolos_totales = length(orx_cs_fixed_slicer);
 simbolos_errados = sum(x_align ~= orx_cs_fixed_slicer);
 symbol_error_rate = simbolos_errados / simbolos_totales;
-aprox_ber_corrigiendo_cs = 1/log2(M) * symbol_error_rate
+aprox_ber_corrigiendo_cs = 1/log2(M) * symbol_error_rate;
 
 ber_teo = berawgn(EbNo_dB, 'qam', M)

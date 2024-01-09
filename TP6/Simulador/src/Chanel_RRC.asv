@@ -100,16 +100,16 @@ freq_noise = sqrt(2*pi*LW/fs).*randn(Ldata,1);
 phase_noise = cumsum(freq_noise); % Proceso de Wiener
 osc_pn = exp(1j.*phase_noise);
 phase_tone = exp(1j.*phase_tone_amp.*sin(2*pi*phase_tone_freq.*time));
-f =logspace(log10(1e6), log10(BR/2), 1024);
-wn = 2*pi*f;
+wn = 2*pi*fn;
 tita0 = 15;
-tita_in = tita0/180*pi .* sin(wn.*time);
+t = [0:Ldata-1].*Ts;
+tita_in = tita0/180*pi * sin(wn.*t);
 %Respuesta al Escalon
 %rxs = rx_noisy.*phase_offset;
 %Respues a la rampa de frecuencia 
 %rxs = rx_noisy.*lo_offset;
 %Respuesta ej 7
-rxs = rx_noisy.*exp(1j.*tita_in);
+rxs = rx_noisy.*exp(1j*tita_in);
 %rxs = rx_noisy.*lo_offset.*phase_offset.*osc_pn.*freq_fluctuations.*phase_tone;
 %rxs =rx_noisy.*lo_offset.*phase_offset.*osc_pn;
 

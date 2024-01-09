@@ -95,9 +95,6 @@ function [o_data_s] = BER_CHECKER(i_config_s,tx_symbs,pll_output,ak_hat)
         orx_cs_fixed(slice) = rx_block_in.*exp(1j*phase_ok);
     end
     
-    figure
-    plot(cs_phase/(pi/2))
-    ylim([-2,2])
     
     Ldata = length(orx_cs_fixed);
     orx_cs_fixed_slicer = zeros(Ldata,1);

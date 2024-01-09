@@ -22,7 +22,7 @@ close all
     config_s.tx_s.BR = 32e9;                    % Baud rate
     config_s.tx_s.M = 16;                       % Cantidad de niveles de la modulacion
     config_s.tx_s.NOS = 1;                      % Tasa de sobremuestreo
-    config_s.tx_s.Lsymbs = 1e6;                 % Cantidad de simbolos
+    config_s.tx_s.Lsymbs = 1e3;                 % Cantidad de simbolos
     config_s.tx_s.rolloff = 0.5;                % Rolloff del filtro conformador
     config_s.tx_s.pulse_shaping_ntaps = 201;    % Cantidad de taps del PS
     config_s.tx_s.pulse_shaping_type = 0;       % 0: RRC, 1: RC
@@ -95,7 +95,7 @@ close all
     title("Constelacion a la Entrada del PLL");
     set(gcf, 'Position', position_and_size, 'Color', 'w');
     %Constelacion Salida PLL
-    scatterplot(pll_output(Ldata/2:(Ldata/2+9000)))
+    scatterplot(pll_output(Ldata/2:(Ldata/2+000)))
     grid on;
     title("Contelacion a la Salida del PLL");
     
