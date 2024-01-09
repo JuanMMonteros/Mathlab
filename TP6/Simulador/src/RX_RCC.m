@@ -37,8 +37,7 @@ function [o_data_s] = RX_RCC(i_config_s,rx_data)
     phase_error = zeros(Ldata,1);
     nco_output = zeros(Ldata,1);
     integral_branch = zeros(Ldata,1);
-    pll_output = zeros(Ldata,1);
-    
+    pll_output = zeros(Ldata,1); 
     for m=2:Ldata
         xpll = rx_data(m);
         derot_x = xpll*exp(-1j*nco_output(m-1));
@@ -64,11 +63,8 @@ function [o_data_s] = RX_RCC(i_config_s,rx_data)
      %--------------------------%
     %         OUTPUT
     %--------------------------%
-    o_data_s.pll_output = pll_output;           % Salida del PLL
-    o_data_s.nco_output = nco_output;           % Salida del NCO
-    o_data_s.integral_branch = integral_branch; % Salida de la rama integral
-    o_data_s.ak_hat = ak_hat;                   % Coef ak 
-    o_data_s.phase_error = phase_error;         % Error de fase
+    o_data_s.pll_output = pll_output; % Salida del PLL
+    o_data_s.ak_hat = ak_hat; % 
     o_data_s.Ldata = Ldata;                     % Longitud del dato
     
 end

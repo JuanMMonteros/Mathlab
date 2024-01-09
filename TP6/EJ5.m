@@ -5,18 +5,18 @@ clc
 
 
 
-BR = 16e9;     
+BR = 32e9;     
 T = 1/BR;     
 fs = BR;        
 L = 50e3;      
 Lat = 50;    
-Kp = 0.02;   
+Kp = 0.05;   
 Ki = Kp/1000;
 t = [0:L-1].*T; 
 
 
 %% Generacion de la entrada
-input = 'Ramp'
+input = 'Step'
 switch(input)
     case 'Step'
         delay_init = 1000;
