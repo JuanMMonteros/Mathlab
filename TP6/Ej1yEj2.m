@@ -268,20 +268,26 @@ h = findall(gcf,'type','line'); % Obtiene todas las líneas en la figura actual
 set(h, 'LineWidth', 2); % Establece el ancho de línea a 2 (o tu valor deseado)
 grid on % Muestra la cuadrícula en el gráfico
 
-%% Ej3-c
-Kp = 0.5;
-Ki = Kp/10000;
+%% Ej3-c    Variacion de Ki
+Kp = 0.05;
+Ki = Kp/100;
 
 H0 = Kp + Ki*z/(z-1);
 NCO = z/(z-1);
 H = feedback(H0*NCO,z^-0);
+
+% Configurar opciones del Bode
+bodeopts = bodeoptions;
+bodeopts.MagVisible = 'on';  % Mostrar solo la parte de magnitud
+bodeopts.PhaseVisible = 'off';  % Ocultar la parte de fase
+
+
 figure
 bode(H, bodeopts); % Utiliza las opciones personalizadas
 % Ajusta el ancho de línea después de generar la gráfica
 h = findall(gcf,'type','line'); % Obtiene todas las líneas en la figura actual
 set(h, 'LineWidth', 2); % Establece el ancho de línea a 2 (o tu valor deseado)
 grid on % Muestra la cuadrícula en el gráfico
-
 
 Kp = 0.05;
 Ki = Kp/1000;
@@ -293,9 +299,8 @@ h = findall(gcf,'type','line'); % Obtiene todas las líneas en la figura actual
 set(h, 'LineWidth', 2); % Establece el ancho de línea a 2 (o tu valor deseado)
 grid on % Muestra la cuadrícula en el gráfico
 
-
-Kp = 0.5;
-Ki = Kp/1;
+Kp = 0.05;
+Ki = Kp/10000;
 
 H0 = Kp + Ki*z/(z-1);
 NCO = z/(z-1);
@@ -307,4 +312,50 @@ bode(H, bodeopts); % Utiliza las opciones personalizadas
 h = findall(gcf,'type','line'); % Obtiene todas las líneas en la figura actual
 set(h, 'LineWidth', 2); % Establece el ancho de línea a 2 (o tu valor deseado)
 grid on % Muestra la cuadrícula en el gráfico
+
+
+
+%% Ej3-c    Variacion de Kp
+Kp = 0.07;
+Ki = 0,00007;
+
+H0 = Kp + Ki*z/(z-1);
+NCO = z/(z-1);
+H = feedback(H0*NCO,z^-0);
+
+% Configurar opciones del Bode
+bodeopts = bodeoptions;
+bodeopts.MagVisible = 'on';  % Mostrar solo la parte de magnitud
+bodeopts.PhaseVisible = 'off';  % Ocultar la parte de fase
+
+
+figure
+bode(H, bodeopts); % Utiliza las opciones personalizadas
+% Ajusta el ancho de línea después de generar la gráfica
+h = findall(gcf,'type','line'); % Obtiene todas las líneas en la figura actual
+set(h, 'LineWidth', 2); % Establece el ancho de línea a 2 (o tu valor deseado)
+grid on % Muestra la cuadrícula en el gráfico
+
+Kp = 0.01;
+
+figure
+bode(H, bodeopts); % Utiliza las opciones personalizadas
+% Ajusta el ancho de línea después de generar la gráfica
+h = findall(gcf,'type','line'); % Obtiene todas las líneas en la figura actual
+set(h, 'LineWidth', 2); % Establece el ancho de línea a 2 (o tu valor deseado)
+grid on % Muestra la cuadrícula en el gráfico
+
+Kp = 0.005;
+
+H0 = Kp + Ki*z/(z-1);
+NCO = z/(z-1);
+H = feedback(H0*NCO,z^-0);
+
+figure
+bode(H, bodeopts); % Utiliza las opciones personalizadas
+% Ajusta el ancho de línea después de generar la gráfica
+h = findall(gcf,'type','line'); % Obtiene todas las líneas en la figura actual
+set(h, 'LineWidth', 2); % Establece el ancho de línea a 2 (o tu valor deseado)
+grid on % Muestra la cuadrícula en el gráfico
+
 
