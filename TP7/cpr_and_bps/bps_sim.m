@@ -14,14 +14,14 @@ function o_data_s = bps_sim(i_cfg_s)
     
     % -- Tx --
     cfg_s.tx_s.n_sym                  = 1e5     ;   % Number of symbols
-    cfg_s.tx_s.n_pil                  = 0*100     ;   % Number of pilots symbols
+    cfg_s.tx_s.n_pil                  = 100     ;   % Number of pilots symbols
     cfg_s.tx_s.n_payload              = 127     ;   % Symbols between pilots
     
     cfg_s.tx_s.M                      = 16      ;   % Modulation levels
-    cfg_s.tx_s.BR                     = 240e9   ;   % Baud rate [Bd]
+    cfg_s.tx_s.BR                     = 32e9   ;   % Baud rate [Bd]
     
     % -- Laser --
-    cfg_s.lw                          = 0e3       ;   % LW [Hz]
+    cfg_s.lw                          = 100e3       ;   % LW [Hz]
     
     % -- Noise --
     cfg_s.ebno_db                     = 10       ;   % EbNo [dB] 

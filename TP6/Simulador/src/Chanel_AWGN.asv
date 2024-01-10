@@ -1,4 +1,4 @@
-function [o_data_s] = Chanel_RRC(i_config_s,s)
+function [o_data_s] = Chanel_AWGN(i_config_s,s)
 %CHANEL_AWGN Summary of this function goes here
 %--------------------------%
     %     DEFAULT SETTINGS
@@ -45,8 +45,8 @@ function [o_data_s] = Chanel_RRC(i_config_s,s)
     fc= config.fc;
     firorder= config.firorder;
     rolloff=config.rolloff;
-    delta_freq =  config.delta_freq; % Offset del LO
-    LW =  config.LW; % Ancho de linea [Hz]
+    delta_freq =  config.LW; % Offset del LO
+    LW = 00e3; % Ancho de linea [Hz]
     theta0 = config.theta0; % Fase inicial
     frequency_fluctuations_amp = config.frequency_fluctuations_amp;
     frequency_fluctuations_freq = config.frequency_fluctuations_freq;
@@ -56,8 +56,6 @@ function [o_data_s] = Chanel_RRC(i_config_s,s)
     
     f=(BR+rolloff*BR)/2*NOS;
     fc=fc/f;
-    Ts=1/BR;
-    fs=1/Ts;
     
     %--------------------------%
     %         PROCESS
@@ -79,37 +77,14 @@ n = sqrt(Pn/2) .* (randn(length(s),1) + 1j.*randn(length(s),1));
 
 % Noise addition
 rx = s + n; 
- if ISE
-         b=fir1(firorder,fc);
-         rx_noisy = filter(b,1,rx);
-     else
-         rx_noisy = rx;
- end
-     
-
-% Agregar efectos de portadora
-Ldata= length(rx_noisy);
-time = (0:Ldata-1).'.*Ts;
-
-lo_offset = exp(1j*2*pi*delta_freq*time); % LO OFFSET
-phase_offset = exp(1j*theta0); % STATIC PHASE
-% Fluctuaciones de frecuencia
-freq_fluctuations = exp(1j*frequency_fluctuations_amp/frequency_fluctuations_freq.*sin(2*pi*frequency_fluctuations_freq.*time));
-% Para el ruidod de fase
-freq_noise = sqrt(2*pi*LW/fs).*randn(Ldata,1);
-phase_noise = cumsum(freq_noise); % Proceso de Wiener
-osc_pn = exp(1j.*phase_noise);
-phase_tone = exp(1j.*phase_tone_amp.*sin(2*pi*phase_tone_freq.*time));
-%Respuesta al Escalon
-
-%rxs = rx_noisy.*phase_offset;
-%Respues a la rampa de frecuencia 
-%rxs = rx_noisy.*lo_offset;
-%rxs = rx_noisy.*lo_offset.*phase_offset.*osc_pn.*freq_fluctuations.*phase_tone;
-%rxs =rx_noisy.*lo_offset.*phase_offset.*osc_pn;
-tita_in= lo_offset.*phase_offset;
-rxs=rx_noisy.*
-o_data_s.yup_n=rxs;
-o_data_s.phase_noise = phase_noise;
+if ISE
+        b=fir1(firorder,fc);
+    else
+        b=1;
+end
+    
+rx = filter(b,1,rx);
+o_data_s.yup_n=rx;
+o_data_s.b=b;
 
 end

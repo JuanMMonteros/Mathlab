@@ -93,7 +93,7 @@ close all
     %o_data_s.ber_theo = ber_check.ber_theo;
     %o_data_s.ber_sim_sin_corregir = ber_check.ber_sim_sin_corregir;
     %o_data_s.ber_sim_corrigiendo = ber_check.ber_sim_corrigiendo;
-    o_data_s.nco_output=rx_s.nco_output;
+    o_data_s.pll_output=rx_s.pll_output;
     o_data_s.tita_in=ch_awgn.phase_tone;
 
 end

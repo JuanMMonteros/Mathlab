@@ -65,5 +65,6 @@ legend('Simulado', 'Teórico'); % Agrega la leyenda
 set(gcf, 'Position',position_and_size,'Color', 'w');
 
 
+
  
 

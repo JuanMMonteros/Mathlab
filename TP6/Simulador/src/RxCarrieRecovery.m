@@ -1,12 +1,19 @@
-function [o_data_s] = RX_RCC(i_config_s,rx_data)
+%-------------------------------------------------------------------------%
+%                                 FULGOR
+% Programmer(s): Daniel A. Juarez
+% Created on   : October 2023
+% Description  : Reception FSE (Fractionaly Spacer equalizer)
+%-------------------------------------------------------------------------%
 
- %--------------------------%
- %     DEFAULT SETTINGS
- %--------------------------%
+function [o_data_s] = RxCarrieRecovery(i_rx_s, i_config_s)
+    
+    %--------------------------%
+    %     DEFAULT SETTINGS
+    %--------------------------%
 
-    config.Kp = 0.05;      
-    config.Ki = config.Kp/1000;  
-    config.M = 4;           
+    config.Kp = 15e-2;      % Constante Kp
+    config.Ki = 15e-2/1000; % Constante Ki 
+    config.M = 4;           % Nivel de modulación
 
     %--------------------------%
     %       REASSIGNMENT
@@ -16,15 +23,17 @@ function [o_data_s] = RX_RCC(i_config_s,rx_data)
     for k = 1:numel(fn)
         if isfield(config,(fn{k}))==1
             config.(fn{k})= i_config_s.(fn{k});
-        %else
-           % error("%s: Parametro del simulador no valido", fn{k})
+        else
+            error("%s: Parametro del simulador no valido", fn{k})
         end
     end
 
     %--------------------------%
     %         VARIABLES
     %--------------------------%
-    % -- Variables de entrada -- %   
+    % -- Variables de entrada -- %
+    symb_in = i_rx_s.ch_out_symb;
+    
     Kp = config.Kp;       
     Ki = config.Ki; 
     M = config.M;           
@@ -32,14 +41,16 @@ function [o_data_s] = RX_RCC(i_config_s,rx_data)
     %--------------------------%
     %         PROCESS
     %--------------------------%
-    
-     Ldata = length(rx_data);
+
+    % -- PLL dirigido por decisiones -- %
+    Ldata = length(symb_in);
     phase_error = zeros(Ldata,1);
     nco_output = zeros(Ldata,1);
     integral_branch = zeros(Ldata,1);
-    pll_output = zeros(Ldata,1); 
+    pll_output = zeros(Ldata,1);
+    
     for m=2:Ldata
-        xpll = rx_data(m);
+        xpll = symb_in(m);
         derot_x = xpll*exp(-1j*nco_output(m-1));
         pll_output(m) = derot_x;
         
@@ -58,14 +69,14 @@ function [o_data_s] = RX_RCC(i_config_s,rx_data)
         ak_hat(m) = slicer(z(m), M);
     end
     
-    
-    
-     %--------------------------%
+    %--------------------------%
     %         OUTPUT
     %--------------------------%
-    o_data_s.pll_output = pll_output; % Salida del PLL
-    o_data_s.pll_output = pll_output;
-    o_data_s.ak_hat = ak_hat; % 
+    o_data_s.pll_output = pll_output;           % Salida del PLL
+    o_data_s.nco_output = nco_output;           % Salida del NCO
+    o_data_s.integral_branch = integral_branch; % Salida de la rama integral
+    o_data_s.ak_hat = ak_hat;                   % Coef ak 
+    o_data_s.phase_error = phase_error;         % Error de fase
     o_data_s.Ldata = Ldata;                     % Longitud del dato
     
 end
