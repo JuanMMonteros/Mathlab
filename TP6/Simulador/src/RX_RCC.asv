@@ -64,7 +64,7 @@ function [o_data_s] = RX_RCC(i_config_s,rx_data)
     %         OUTPUT
     %--------------------------%
     o_data_s.pll_output = pll_output; % Salida del PLL
-    o_data_s.nco_output = nco_output;
+    o_data_s.pll_output = pll_output;
     o_data_s.ak_hat = ak_hat; % 
     o_data_s.Ldata = Ldata;                     % Longitud del dato
     

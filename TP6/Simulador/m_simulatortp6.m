@@ -71,7 +71,7 @@ close all
     %--PLL RX--
     rx_s = RX_RCC(config_s.rx_s,ch_awgn.yup_n);
     %--Ber Cheker--
-    ber_check = BER_CHECKER(config_s.ber_s,o_tx_s.tx_symbs,rx_s.pll_output,rx_s.ak_hat);
+    % ber_check = BER_CHECKER(config_s.ber_s,o_tx_s.tx_symbs,rx_s.pll_output,rx_s.ak_hat);
     % -- Ch -- %
     ch_out_symb = ch_awgn.yup_n;    
     % -- Rx Carrie Recovery -- %
@@ -90,8 +90,10 @@ close all
     end
         
     
-    o_data_s.ber_theo = ber_check.ber_theo;
-    o_data_s.ber_sim_sin_corregir = ber_check.ber_sim_sin_corregir;
-    o_data_s.ber_sim_corrigiendo = ber_check.ber_sim_corrigiendo;
+    %o_data_s.ber_theo = ber_check.ber_theo;
+    %o_data_s.ber_sim_sin_corregir = ber_check.ber_sim_sin_corregir;
+    %o_data_s.ber_sim_corrigiendo = ber_check.ber_sim_corrigiendo;
+    o_data_s.nco_output=rx_s.nco_output;
+    o_data_s.tita_in=ch_awgn.phase_tone;
 
 end
