@@ -12,7 +12,7 @@ fs = BR; % Sampling rate to emulate analog domain
 T = 1/BR; % Time interval between two consecutive symbols
 Ts = 1/fs; % Time between 2 conseutive samples at Tx output
 M=16;
-EbNo_dB = 10; % dB
+EbNo_dB = 30; % dB
 
 % Parametros de la portadora
 delta_freq = 10e6; % Offset del LO
@@ -37,7 +37,7 @@ xsymb = qammod(randi([0 M-1], L,1), M);
 Psignal = var(xsymb);
 Pnoise = Psignal/SNR_canal;
 No = Pnoise; % varianza por unidad de frecuencia
-noise_real = sqrt(No/2)*randn(size(xsymb)); % Lo que acompaña al ruido es el sigma (desvio estandard)
+noise_real = sqrt(No/2)*randn(size(xsymb)); % Lo que acompaÃ±a al ruido es el sigma (desvio estandard)
 noise_imag = sqrt(No/2)*randn(size(xsymb));
 noise = noise_real + 1j*noise_imag;
 % NO VALE noise= (1+1j)*randn(size(yup))
@@ -90,7 +90,7 @@ wd_v = n_v * pi/n_freq_pos;
 G_th_v = (Kp+Ki.*1./(1-exp(-1j*wd_v))) * 1./(1-exp(-1j.*wd_v));
 H_th_v = G_th_v ./ (1+G_th_v.*exp(-1j*wd_v));
 H_th_db_v = 20*log10(abs(H_th_v));
- % Eliminar la �ltima muestra de pll_output y frec
+ % Eliminar la última muestra de pll_output y frec
 pll_out = pll_out(1:end-1);
 frec = frec(1:end-1);
 
@@ -106,7 +106,7 @@ xlim([2e6 4e8]);
 title('Jitter Transfer Plot');
 xlabel('Time [s]')
 ylabel('Amplitudes [dB]')
-legend('Simulado', 'Te�rico'); % Agrega la leyenda
+legend('Simulado', 'Teórico'); % Agrega la leyenda
 set(gcf, 'Position',position_and_size,'Color', 'w');
 
 
