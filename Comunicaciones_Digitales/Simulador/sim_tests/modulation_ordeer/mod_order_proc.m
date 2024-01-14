@@ -10,7 +10,7 @@ if ~exist(out_dir,'dir')
     mkdir(out_dir);
 end
 
-file = [out_dir, 'o_data.mat'];
+file = [out, 'o_data.mat'];
 load(file);
 
 n_fc = length(fc_v);

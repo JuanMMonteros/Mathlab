@@ -11,12 +11,6 @@ if ~exist(out_dir,'dir')
     mkdir(out_dir);
 end
 
-
-% Valores recomendados para barrer
-phases_to_test = [4, 8, 12, 16];
-filter_lengths = [5, 15, 39, 87, 131, 201];
-lw_values = [0, 10e3, 100e3, 500e3, 1e6];
-
 %% General configuration
     % -- Tx --
     config_s.tx_s.n_sym                  = 1e5     ;   % Number of symbols
@@ -44,27 +38,41 @@ lw_values = [0, 10e3, 100e3, 500e3, 1e6];
 % Valores para barrer
 phases = [4, 8, 12, 16];
 filter_lengths = [5, 15, 39, 87, 131, 201];
-lw= [0, 10e3, 100e3, 500e3, 1e6];
+lw=[0, 10e3, 100e3, 500e3, 1e6];
+target_ber = 2e-2;  % Target BER
+n_lw = length(lw);
+n_filter = length(filter_lengths);
+n_ph = length(phases);
 
-n_lw=lenght(lw);
-n_fliter=lenght(filter_lengths);
-n_ph = lenght(filter_lengths);
+out_c = cell(n_filter,n_ph);
+ber_sim_v = zeros(n_filter,n_ph);
+snr_loss_v = zeros(n_filter,n_ph);
 
-out_c = cell(n_phases,n_fliter);
-ber_theo_v = zeros(n_phases,n_fliter);
-ber_sim_v = zeros(n_phases,n_phases);
-
-for idx_lw = 0:n_lw
-    cfg_s=config_s;
-    cfg_s.lw=lw(idx_lw);
-    for idx_ph = 0:n_ph
-        cfg_s.bps_s.n_phases=phases(idx_ph);
-        parfor idx_filter = 0:n_filter
-            cfg_s.bps_s.filter_lengt=filter_lengths(idx_filter);
-            o_data = bps_sim(cfg_s);
-  
+for idx_lw = 1:n_lw
+    cfg_s = config_s;
+    cfg_s.lw = lw(idx_lw);
+    for idx_ph = 1:n_ph
+        cfg_s.bps_s.n_phases = phases(idx_ph);
+        for idx_filter = 1:n_filter
+            ebno = 3;  % Initial EbNo value
+            while true
+                cfg_s.bps_s.filter_length = filter_lengths(idx_filter);
+                cfg_s.ebno_db = ebno;
+                o_data = bps_sim(cfg_s);
+                
+                if o_data.ber_est_bps > target_ber+0.001
+                    ebno = ebno + 0.1;
+                elseif o_data.ber_est_bps < target_ber - 0.001
+                    ebno = ebno - 0.1;
+                else
+                    break;  % Exit the loop when target BER is achieved
+                end
+            end
+            
+            ber_sim_v(idx_filter, idx_ph) = o_data.ber_est_bps;
+            snr_loss_v(idx_filter, idx_ph) = o_data.snr_loss;
         end
     end
+    file_name = strcat(out_dir, 'o_data_', num2str(lw(idx_lw)), '.mat');
+    save(file_name, 'ber_sim_v','snr_loss_v','filter_lengths','phases','cfg_s');
 end
-
-

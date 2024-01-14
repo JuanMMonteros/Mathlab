@@ -28,7 +28,7 @@ function o_data_s = bps_sim(i_cfg_s)
     
     % -- BPS --
     cfg_s.bps_s.n_phases              = 16      ;   % BPS phases
-    cfg_s.bps_s.filter_length         = 5   ;   % BPS filter len
+    cfg_s.bps_s.filter_length         = 5    ;   % BPS filter len
     
     % -- CS corrector --
     cfg_s.en_cs_corrector             = 1       ;   % CS corrector for BPS path
@@ -133,7 +133,7 @@ noise_power_rx = var(rx_bps_cs_v) - signal_power_rx;
 snr_db_rx = 10 * log10(signal_power_rx / noise_power_rx);
 
 % -- Calcule la pérdida de SNR --
-snr_loss = snr(abs(ch_v))- snr(abs(rx_bps_cs_v));
+snr_loss = snr(ch_v)- snr();
     %--------------------------%
     %          OUTPUT
     %--------------------------%
