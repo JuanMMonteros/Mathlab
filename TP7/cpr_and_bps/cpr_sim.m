@@ -11,23 +11,24 @@ function o_data_s = cpr_sim(i_cfg_s)
     %--------------------------%
     %     DEFAULT SETTINGS
     %--------------------------%
-    
+    %-- plots --$
+    cfg_s.plots=1;
     % -- Tx --
     cfg_s.tx_s.n_sym                  = 1e5     ;   % Number of symbols
     cfg_s.tx_s.n_pil                  = 100     ;   % Number of pilots symbols
-    cfg_s.tx_s.n_payload              = 127     ;   % Symbols between pilots
+    cfg_s.tx_s.n_payload              = 10     ;   % Symbols between pilots
     
     cfg_s.tx_s.M                      = 16      ;   % Modulation levels
-    cfg_s.tx_s.BR                     = 240e9   ;   % Baud rate [Bd]
+    cfg_s.tx_s.BR                     = 32e9   ;   % Baud rate [Bd]
    
     % -- Laser --
-    cfg_s.lw                          = 0e3     ;   % Tx LW [Hz]
+    cfg_s.lw                          = 10e3     ;   % Tx LW [Hz]
     
     % -- Noise --
     cfg_s.ebno_db                     = 10      ;   % EbNo [dB]
     
     % -- CPR --
-    cfg_s.n_taps_cpr                  = 65      ;   % Taps to filter CPR error
+    cfg_s.n_taps_cpr                  = 5      ;   % Taps to filter CPR error
     
     %--------------------------%
     %       REASSIGNMENT
@@ -102,6 +103,7 @@ function o_data_s = cpr_sim(i_cfg_s)
                             upsample(cpr_error_fil_v, cfg_s.tx_s.n_payload+1));
 
         cpr_phase_align_v = cpr_phase_v(fifo_len+1:end);
+        lw_align_v = lw_v(fifo_len+1:end);
         if length(cpr_phase_align_v) < n_ak
             n_ak = length(cpr_phase_align_v);
         else
@@ -136,6 +138,21 @@ function o_data_s = cpr_sim(i_cfg_s)
     ebno = 10^(snr_db/10) / log2(cfg_s.tx_s.M);
     ebno_db = 10*log10(ebno);
     ber_theo = berawgn(ebno_db, 'QAM', cfg_s.tx_s.M);
+    
+     if cfg_s.plots
+        figure;
+        plot(lw_align_v, '-', 'DisplayName','Ruido de Fase', 'LineWidth', 2);
+        hold on;
+        grid on;
+        plot(unwrap(cpr_phase_align_v), '-', 'DisplayName','CPR', 'LineWidth',2);
+        titulo = sprintf('Seguimiento del CPR \n Payload: %d, Ruido de Fase (Khz): %.2f, NTAPS del Filtro: %d',cfg_s.tx_s.n_payload, cfg_s.lw/1e3, cfg_s.n_taps_cpr);
+        hTitle = title(titulo);
+        set(hTitle, 'FontSize', 14);
+        ylabel('Amplitud');
+        xlim([0,8.5e4]);
+        xlabel('Muestras');
+        legend('Location', 'Best');
+    end
     
     %--------------------------%
     %          OUTPUT

@@ -20,16 +20,16 @@ snr_theo=ebno_ber2e2+ 10*log10(log2(16));
 fz = 15;
 %%
 figure
-semilogx(filter_lengths, snr_loss_v(:,1) - snr_theo , 'o-', 'DisplayName', ['n\_phases=', num2str(phases(1))], 'LineWidth', 2);
+semilogx(filter_lengths, snr_loss_v(:,1) - snr_theo , 'o-', 'DisplayName', ['payload=', num2str(payload(1))], 'LineWidth', 2);
 hold on;
-semilogx(filter_lengths, snr_loss_v(:,2) - snr_theo, 'o-', 'DisplayName', ['n\_phases=', num2str(phases(2))], 'LineWidth', 2);
-semilogx(filter_lengths, snr_loss_v(:,3) - snr_theo, 'o-', 'DisplayName', ['n\_phases=', num2str(phases(3))], 'LineWidth', 2);
-semilogx(filter_lengths, snr_loss_v(:,4) - snr_theo, 'o-', 'DisplayName', ['n\_phases=', num2str(phases(4))], 'LineWidth', 2);
+semilogx(filter_lengths, snr_loss_v(:,2) - snr_theo, 'o-', 'DisplayName', ['payload=', num2str(payload(2))], 'LineWidth', 2);
+semilogx(filter_lengths, snr_loss_v(:,3) - snr_theo, 'o-', 'DisplayName', ['payload=', num2str(payload(3))], 'LineWidth', 2);
+semilogx(filter_lengths, snr_loss_v(:,4) - snr_theo, 'o-', 'DisplayName', ['payload=', num2str(payload(4))], 'LineWidth', 2);
 
-tit = sprintf('snr_loss vs filter_lengths,  LW=%.2fKHz', lw(idx_lw)/1e3);
+tit = sprintf('snr_loss vs filter_taps,  LW=%.2fKHz', lw(idx_lw)/1e3);
 title(tit, 'Interpreter','latex','FontSize', fz);
 ylabel('SNR LOSS(db) - BER=2e-2', 'Interpreter','latex','FontSize', fz);
-xlabel('filter_lengths', 'Interpreter','latex','FontSize', fz);
+xlabel('filter_taps', 'Interpreter','latex','FontSize', fz);
 %ylim([1,-1]);
 legend({},'Location','no','Interpreter','latex','FontSize', fz-2);
 set(gcf, 'Position', [50 50 500 500],'Color', 'w');

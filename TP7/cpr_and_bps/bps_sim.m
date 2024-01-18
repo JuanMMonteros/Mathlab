@@ -11,7 +11,8 @@ function o_data_s = bps_sim(i_cfg_s)
     %--------------------------%
     %     DEFAULT SETTINGS
     %--------------------------%
-    
+    %-- plots --$
+    cfg_s.plots=1;
     % -- Tx --
     cfg_s.tx_s.n_sym                  = 1e5     ;   % Number of symbols
     cfg_s.tx_s.n_pil                  = 0*100     ;   % Number of pilots symbols
@@ -21,14 +22,14 @@ function o_data_s = bps_sim(i_cfg_s)
     cfg_s.tx_s.BR                     = 32e9   ;   % Baud rate [Bd]
     
     % -- Laser --
-    cfg_s.lw                          = 0e3       ;   % LW [Hz]
+    cfg_s.lw                          = 10e3       ;   % LW [Hz]
     
     % -- Noise --
-    cfg_s.ebno_db                     = 10      ;   % EbNo [dB] 
+    cfg_s.ebno_db                     = 6.7      ;   % EbNo [dB] 
     
     % -- BPS --
-    cfg_s.bps_s.n_phases              = 16      ;   % BPS phases
-    cfg_s.bps_s.filter_length         = 5   ;   % BPS filter len
+    cfg_s.bps_s.n_phases              = 4     ;   % BPS phases
+    cfg_s.bps_s.filter_length         = 101   ;   % BPS filter len
     
     % -- CS corrector --
     cfg_s.en_cs_corrector             = 1       ;   % CS corrector for BPS path
@@ -67,13 +68,13 @@ function o_data_s = bps_sim(i_cfg_s)
     fs = cfg_s.tx_s.BR;
     lw_sigma = sqrt(2*pi*cfg_s.lw*1/fs);
     lw_v = cumsum(lw_sigma*randn(n_sym,1));
-    ch_ve = ch_v .* exp(1j*lw_v);
-    
+    ch_v = ch_v .* exp(1j*lw_v);
     % -- BPS --
-    i_bps_s.signal_v = ch_ve.'; % El modulo recibe vectores fila
+    i_bps_s.signal_v = ch_v.'; % El modulo recibe vectores fila
     o_bps_s = m_bps(i_bps_s, cfg_s.bps_s);
     
     rx_bps_v = o_bps_s.bps_output;
+    bps_phase=o_bps_s.bps_phase;
     
     % CS corrector (BPS no corrige Cycle Slip)
     delay = (cfg_s.bps_s.filter_length-1)/2;
@@ -133,10 +134,24 @@ noise_power_rx = var(rx_bps_cs_v) - signal_power_rx;
 snr_db_rx = 10 * log10(signal_power_rx / noise_power_rx);
 
 % -- Calcule la pérdida de SNR --
-snr_loss = snr(abs(ch_v))- snr(abs(rx_bps_cs_v));
+snr_loss = snr(abs(o_tx_s.sym_v))- snr(abs(ak_hat_bps_v));
     %--------------------------%
     %          OUTPUT
     %--------------------------%
+    
+    if cfg_s.plots
+        figure;
+        plot(lw_v, '-', 'DisplayName','Ruido de Fase', 'LineWidth', 2);
+        hold on;
+        grid on;
+        plot(unwrap(-bps_phase), '-', 'DisplayName','BSP', 'LineWidth',2);
+        titulo = sprintf('Seguimiento del BSP \n Numeros de Fases: %d, Ruido de Fase (Khz): %.2f, Longitud del Filtro: %d',cfg_s.bps_s.n_phases, cfg_s.lw/1e3, cfg_s.bps_s.filter_length);
+        hTitle = title(titulo);
+        set(hTitle, 'FontSize', 14);
+        ylabel('Amplitud');
+        xlabel('Muestras');
+        legend('Location', 'Best');
+    end
     
     o_data_s.ber_theo = ber_theo;
     o_data_s.ber_est_bps = ber_est_bps;

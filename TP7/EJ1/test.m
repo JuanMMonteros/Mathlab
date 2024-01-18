@@ -12,6 +12,7 @@ if ~exist(out_dir,'dir')
 end
 
 %% General configuration
+    config_s.plots=0;
     % -- Tx --
     config_s.tx_s.n_sym                  = 1e5     ;   % Number of symbols
     config_s.tx_s.n_pil                  = 100     ;   % Number of pilots symbols
@@ -37,7 +38,7 @@ end
    %%
 % Valores para barrer
 phases = [4, 8, 12, 16];
-filter_lengths = [5, 15, 39, 87, 131, 201];
+filter_lengths = [5, 9,13,15,21];
 lw=[0, 10e3, 100e3, 500e3, 1e6];
 target_ber = 2e-2;  % Target BER
 n_lw = length(lw);
@@ -49,12 +50,16 @@ ber_sim_v = zeros(n_filter,n_ph);
 snr_loss_v = zeros(n_filter,n_ph);
 
 for idx_lw = 1:n_lw
-    cfg_s = config_s;
-    cfg_s.lw = lw(idx_lw);
     for idx_ph = 1:n_ph
-        cfg_s.bps_s.n_phases = phases(idx_ph);
-        for idx_filter = 1:n_filter
-            ebno = 3;  % Initial EbNo value
+        parfor idx_filter = 1:n_filter
+            cfg_s = config_s;
+            cfg_s.lw = lw(idx_lw);
+            cfg_s.bps_s.n_phases = phases(idx_ph);
+            if filter_lengths(idx_filter) > 10
+                ebno = 6.7;  % Es el valor teorico 
+            else 
+                ebno = 11;
+            end
             while true
                 cfg_s.bps_s.filter_length = filter_lengths(idx_filter);
                 cfg_s.ebno_db = ebno;
@@ -70,7 +75,7 @@ for idx_lw = 1:n_lw
             end
             
             ber_sim_v(idx_filter, idx_ph) = o_data.ber_est_bps;
-            snr_loss_v(idx_filter, idx_ph) = o_data.snr_loss;
+            snr_loss_v(idx_filter, idx_ph) = o_data.ebno_db + 10*log10(log2(cfg_s.tx_s.M));
         end
     end
     file_name = strcat(out_dir, 'o_data_', num2str(lw(idx_lw)), '.mat');
