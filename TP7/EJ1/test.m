@@ -13,7 +13,7 @@ end
 
 %% General configuration
     config_s.plots=0;
-    % -- Tx --
+    % -- Tx --sssssssss
     config_s.tx_s.n_sym                  = 1e5     ;   % Number of symbols
     config_s.tx_s.n_pil                  = 100     ;   % Number of pilots symbols
     config_s.tx_s.n_payload              = 127     ;   % Symbols between pilots
