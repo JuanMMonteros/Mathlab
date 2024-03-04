@@ -9,13 +9,15 @@ function [odata] = pulsed_radar_simulator(config_s)
         max_range = config_s.max_range;
         No = config_s.No;
         Niters = config_s.Niters;
+        NOS = config_s.NOS;           % Factor de sobremuestreo del canal
     else
         tau = 5e-9;       % Ancho del pulso [s]
-        Po = 7.5e3 ;      % Potencia instantanea [W]
-        range=1200;       % Distancia al target [m]
-        max_range = 2e3;  % Distancia maxima alcanzable [m]
-        No = 1*(.6e-9)^2; % PSD del ruido one-side [W/Hz]
-        Niters = 1500;    % Iteraciones del simulador
+        Po = 5e3 ;      % Potencia instantanea [W]
+        range=700;       % Distancia al target [m]
+        max_range = 2.5e3;  % Distancia maxima alcanzable [m]
+        No = 1*(.4e-9)^2; % PSD del ruido one-side [W/Hz]
+        Niters = 2500;    % Iteraciones del simulador
+        NOS = 16;           % Factor de sobremuestreo del canal
     end        
 
     %% Parametros generales
@@ -31,7 +33,7 @@ function [odata] = pulsed_radar_simulator(config_s)
 
     gain_detector = 5;  % ganancia [-]
 
-    NOS = 16;           % Factor de sobremuestreo del canal
+    
     fs = (1/tau)*NOS;   % Frecuencia de muestreo de la simulacion
 
     %% Transmisor
@@ -51,6 +53,10 @@ function [odata] = pulsed_radar_simulator(config_s)
     gr_lin = 10^(GR/10);
     alpha = sqrt(gt_lin*gr_lin*lambda^2*RCS/ ((4*pi)^3 * range^4));
     
+    if alpha > 1
+        alpha = 1;
+    end
+    
     fprintf("\n");
     fprintf("Potencia instantanea TX: %2.2f W \n", Po);
     fprintf("Channel Gain: %2.2f dB \n", 20*log10(alpha));
@@ -67,6 +73,7 @@ function [odata] = pulsed_radar_simulator(config_s)
     ch_output_aux0 = phase_change0.*alpha.*[zeros(delay_samples0,1); s_t];
     zeros_que_faltan0 = round(2*max_range/c*fs)-length(ch_output_aux0);
     ch_output0 = [ch_output_aux0; zeros(zeros_que_faltan0,1)];
+    %plot(ch_output0);
 
 %     % Aux para hacer otro target
 %     delta_range = -300;
@@ -97,6 +104,11 @@ function [odata] = pulsed_radar_simulator(config_s)
     snr_teo = gain_detector.^2 * Prx * tau/No;
     fprintf("SNR: %2.2fdB \n", 10*log10(snr_teo));
     fprintf("\n")
+    
+    max_delay = 2*max_range/c;
+    max_delay_samples = round(max_delay*fs);
+    real_max_delay = max_delay_samples/fs; 
+    real_max_range = real_max_delay/2 * c; 
 
     %% Front End
     
@@ -117,7 +129,8 @@ function [odata] = pulsed_radar_simulator(config_s)
     tn_vector = zeros(Nthrs,1);
 
     est_range = zeros(Niters,1);
-
+    
+    y_mf_esperanza = 0;
     for niter = 1:Niters
 
         noise = sqrt(noise_power/2)*(randn(size(y_t)) + 1j.*randn(size(y_t)));
@@ -126,16 +139,18 @@ function [odata] = pulsed_radar_simulator(config_s)
         % Matched filter
         h_mf = conj(x_t(end:-1:1));
         h_mf = h_mf/sum(h_mf); % Normalizo para energia unitaria
-        y_mf = conv(h_mf, z_t);
+        y_mf = filter(h_mf, 1, z_t);
 
-        [~, imax] = max(abs(y_mf).^2);
-        est_range(niter) = imax;
+        [~, imax] = max(abs(y_mf));
+        est_range(niter) = (imax-length(h_mf))*real_max_range/(length(y_mf));
 
     %     plot(abs(y_mf).^2);
     %     hold all
 
         phase_decim = mod(delay_samples0-1,NOS);
         y_mf_decim_sq = abs(y_mf(1+phase_decim:NOS:end)).^2;
+        
+        y_mf_esperanza = y_mf_esperanza + y_mf_decim_sq/Niters;
 
         cell_of_interest = 1+ceil(range/deltaR); % El +1 es por matlab
         % Cuando cuente PFA, descarto la primer celda y la ultima
@@ -162,7 +177,21 @@ function [odata] = pulsed_radar_simulator(config_s)
         fn_vector=fn_vector+fns;
 
     end
+    
+    % Estimacion de SNR usando la esperanza de la salida del MF
+    [value_max, idx_max] = max(y_mf_esperanza);
+    if idx_max > length(y_mf_esperanza)/2
+        Pn_est = mean(y_mf_esperanza(1:100));
+    else
+        Pn_est = mean(y_mf_esperanza(end-100:end));
+    end
+    Ps_est = value_max - Pn_est;
+    snr_est = Ps_est/Pn_est;
 
+    range_sim_prec = std(est_range);
+    range_theo_res = tau/2*c;
+    range_theo_prec = range_theo_res/snr_teo;
+    
     pfa_vector = fp_vector./(fp_vector+tn_vector);
     pfa_vector( fp_vector<20)=0;
     pd_vector = tp_vector./(tp_vector+fn_vector);
@@ -179,5 +208,9 @@ function [odata] = pulsed_radar_simulator(config_s)
     odata.fn_vector=fn_vector;
     odata.est_range = est_range;
     odata.snr_teo = snr_teo;
+    odata.snr_est = snr_est;
+    odata.range_sim_prec = range_sim_prec;
+    odata.range_theo_prec = range_theo_prec;
+    odata.range_theo_res = range_theo_res;
 
 end
