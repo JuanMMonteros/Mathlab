@@ -1,16 +1,16 @@
-clear; close all; clc;
+
 
 config_s.tau = 5e-9;        % Ancho del pulso [s]
-config_s.Po = 7.5e3;        % Potencia instantanea [W]
+config_s.Po = 5e3;        % Potencia instantanea [W]
 config_s.max_range = 3e3;   % Rango maximo [m]
-config_s.No = 1*(.6e-9)^2;  % PSD del ruido one-side [W/Hz]
+config_s.No = 1*(.4e-9)^2;  % PSD del ruido one-side [W/Hz]
 config_s.Niters = 1e3;      % Numero de iteraciones (experimentos)
 config_s.NOS=16;
 figure;
 idx_leg = 1;
 legends_c = {};
     
-for range = [1800, 2000, 2200, 2500]
+for range = [250, 500, 1000, 1500]
     
     config_s.range = range;
 
@@ -18,7 +18,7 @@ for range = [1800, 2000, 2200, 2500]
     
     % Theoretical ROC
     snr_db = 10*log10(odata.snr_teo);
-    [theo_pd_v, theo_pfa_v] = myrocsnr(snr_db);
+    [theo_pd_v, theo_pfa_v] = rocsnr(snr_db, 'SignalType','NonFluctuatingNonCoherent');
     p_th = semilogx(theo_pfa_v, theo_pd_v, '--', 'LineWidth', 1.2);
     legends_c{idx_leg} = sprintf("Theo ROC. SNR = %.1f [dB]",snr_db);
     idx_leg = idx_leg + 1;
