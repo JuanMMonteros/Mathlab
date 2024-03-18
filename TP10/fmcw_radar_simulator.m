@@ -65,7 +65,7 @@ function [odata_s] = fmcw_radar_simulator(config_s)
         % RX
         
         snr_db = 16;
-        fft_zp = 8;
+        fft_zp = 16;
         
         n_thr = 20;
         
@@ -213,12 +213,12 @@ function [odata_s] = fmcw_radar_simulator(config_s)
             i = i+1;
         end
            % Encuentra el valor máximo en toda la matriz fft_m
-           maxValue = max(abs(fft_m), [], 'all');
+           maxValue = max(abs(fft_zp_m), [], 'all');
 
            % Encuentra los índices de los valores máximos
-            [rowIndex, colIndex, pageIndex] = ind2sub(size(fft_m), find(abs(fft_m) == maxValue));
-            est_range(idx) = (colIndex) * range_max / size(fft_m, 2);
-            est_speed(idx) = (size(fft_m, 1)-rowIndex ) * speed_max / (size(fft_m, 1));
+            [rowIndex, colIndex, pageIndex] = ind2sub(size(fft_zp_m), find(abs(fft_zp_m) == maxValue));
+            est_range(idx) = (colIndex) *6* range_max / size(fft_zp_m, 2);
+            est_speed(idx) = (rowIndex) *6* fd_max * (lambda/2) / (size(fft_zp_m, 1));
         
         NFFT_v = size(fft_m);
         
@@ -288,6 +288,8 @@ function [odata_s] = fmcw_radar_simulator(config_s)
     %preccion 
     range_sim_prec = std(est_range);
     speed_sim_prec = std(est_speed);
+    range_theo_prec = 1/(2*pi*t_meas)*sqrt(6/snr_est)*chirp_T*c/(2*chirp_bw);
+    speed_theo_prec = 1/(2*pi*chirp_T*chirp_P)*sqrt(6/snr_est)*lambda/2;
     %% Plots
     if en_plots
         
@@ -346,7 +348,9 @@ function [odata_s] = fmcw_radar_simulator(config_s)
     odata_s.pfa_est_v = pfa_est_v;
     odata_s.pd_th_v = pd_th_v;
     odata_s.pfa_th_v = pfa_th_v;
-    odata.range_sim_prec = range_sim_prec;
-    odata.speed_sim_prec = speed_sim_prec;
+    odata_s.range_sim_prec = range_sim_prec;
+    odata_s.speed_sim_prec = speed_sim_prec;
+    odata_s.range_theo_prec = range_theo_prec;
+    odata_s.speed_theo_prec = speed_theo_prec;
     
 end
