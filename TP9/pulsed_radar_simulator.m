@@ -15,7 +15,7 @@ function [odata] = pulsed_radar_simulator(config_s)
         Po = 5e3 ;      % Potencia instantanea [W]
         range=700;       % Distancia al target [m]
         max_range = 2.5e3;  % Distancia maxima alcanzable [m]
-        No = 1*(.4e-9)^2; % PSD del ruido one-side [W/Hz]
+        No = 0*(.4e-9)^2; % PSD del ruido one-side [W/Hz]
         Niters = 2500;    % Iteraciones del simulador
         NOS = 16;           % Factor de sobremuestreo del canal
     end        
@@ -144,8 +144,11 @@ function [odata] = pulsed_radar_simulator(config_s)
         [~, imax] = max(abs(y_mf));
         est_range(niter) = (imax-length(h_mf))*real_max_range/(length(y_mf));
 
-    %     plot(abs(y_mf).^2);
-    %     hold all
+        
+%         if niter==1
+%          plot(abs(y_mf).^2);
+%          hold all
+%         end
 
         phase_decim = mod(delay_samples0-1,NOS);
         y_mf_decim_sq = abs(y_mf(1+phase_decim:NOS:end)).^2;
@@ -155,12 +158,13 @@ function [odata] = pulsed_radar_simulator(config_s)
         cell_of_interest = 1+ceil(range/deltaR); % El +1 es por matlab
         % Cuando cuente PFA, descarto la primer celda y la ultima
 
-        %
-%         figure
-%         timeline = 1/fs*(0:length(y_mf)-1);
-%         plot(timeline, abs(y_mf).^2); hold all
-%         timeline2 = 1/(fs)*(phase_decim:NOS:length(y_mf)-1);
-%         plot(timeline2, y_mf_decim_sq,'o'); hold all
+%         if niter==1
+%              figure
+%              timeline = 1/fs*(0:length(y_mf)-1);
+%              plot(timeline, abs(y_mf).^2); hold all;
+%              timeline2 = 1/(fs)*(phase_decim:NOS:length(y_mf)-1);
+%              plot(timeline2, y_mf_decim_sq,'o'); 
+%         end
 
         % Contar TP, FN, TN, FP
 

@@ -9,7 +9,7 @@ for idx_tau = 1:length(tau_v)
     config_s.Po = 5e3;          % Potencia instantanea [W]
     config_s.max_range = 2500;  % Rango maximo [m]
     config_s.No = 1*(.4e-9)^2;  % PSD del ruido one-side [W/Hz]
-    config_s.Niters = 1e3;      % Numero de iteraciones (experimentos)
+    config_s.Niters = 100;      % Numero de iteraciones (experimentos)
     config_s.NOS=16;
     
     sim_prec = [];
@@ -32,7 +32,8 @@ for idx_tau = 1:length(tau_v)
  
     semilogy(range_m(idx_tau,:),sim_prec,'-o','LineWidth',2);
 end
-title(sprintf('Rango VS Precicion con '));
+title(sprintf('Precicion vs Distancia del Target'));
 xlabel('Distancia al objetivo (m)');
 ylabel('Precicion del Radar (m)');
+xlim([1300,2200]);
 legend('CR Bound',sprintf("sim tau=%.2e", tau_v(1)),sprintf("sim tau=%.2e", tau_v(2)),sprintf("sim tau=%.2e", tau_v(3)));
