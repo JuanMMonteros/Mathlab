@@ -40,11 +40,11 @@ function [odata_s] = fmcw_radar_simulator(config_s)
         
         % General
         
-        fs_ch = 400e6; % Frecuancia del canal
+        fs_ch = 600e6; % Frecuancia del canal
         fs_dsp = 100e6;% Frecuencia del dsp
         n_fires = 1e2; % Disparos al target 
         en_noise = 1; % activador de  ruido 
-        en_plots = 1; % activador de  graficos 
+        en_plots = 0; % activador de  graficos 
         
         % TX
         chirp_bw = 100e6; %
@@ -217,8 +217,8 @@ function [odata_s] = fmcw_radar_simulator(config_s)
 
            % Encuentra los índices de los valores máximos
             [rowIndex, colIndex, pageIndex] = ind2sub(size(fft_zp_m), find(abs(fft_zp_m) == maxValue));
-            est_range(idx) = (colIndex) *6* range_max / size(fft_zp_m, 2);
-            est_speed(idx) = (rowIndex) *6* fd_max * (lambda/2) / (size(fft_zp_m, 1));
+            est_range(idx) = (colIndex-h_aaf_delay)*fs_dsp /chirp_slope* c / 2/ size(fft_zp_m, 2);
+            est_speed(idx) = (rowIndex-h_aaf_delay) * fs_dsp*(chirp_T*chirp_P)*lambda/2 / (size(fft_zp_m, 1));
         
         NFFT_v = size(fft_m);
         
