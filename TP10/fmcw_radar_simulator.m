@@ -217,8 +217,8 @@ function [odata_s] = fmcw_radar_simulator(config_s)
 
            % Encuentra los índices de los valores máximos
             [rowIndex, colIndex, pageIndex] = ind2sub(size(fft_zp_m), find(abs(fft_zp_m) == maxValue));
-            est_range(idx) = (colIndex-h_aaf_delay)*fs_dsp /chirp_slope* c / 2/ size(fft_zp_m, 2);
-            est_speed(idx) = (rowIndex-h_aaf_delay) * fs_dsp*(chirp_T*chirp_P)*lambda/2 / (size(fft_zp_m, 1));
+            est_range(idx) = (colIndex-1)*fs_dsp / size(fft_zp_m, 2) /chirp_slope* c / 2;
+            est_speed(idx) = (rowIndex-1) * fs_dsp / (size(fft_zp_m, 1))*(t_meas*chirp_P)*lambda/2;
         
         NFFT_v = size(fft_m);
         
