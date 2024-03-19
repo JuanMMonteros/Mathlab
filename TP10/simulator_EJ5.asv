@@ -56,8 +56,8 @@ function [odata_s] = simulator_EJ5(config_s)
         
         range = 200;
         speed = 70;
-        range_1=50;
-        speed_1 =30;
+        deltaR=30;
+        deltaV =30;
         range_max = 300;
         speed_max = 100;
         
@@ -118,8 +118,8 @@ function [odata_s] = simulator_EJ5(config_s)
     %%
     delta_R=c*chirp_T/(2*chirp_bw*t_meas);
     delta_V=lambda/(2*chirp_P*chirp_T);
-    range1=range + range_1*delta_R;
-    speed1=speed + speed_1*delta_V;
+    range1=range + deltaR*delta_R;
+    speed1=speed + deltaV*delta_V;
     tau1 = 2*range1/c; 
     %Target Aux
     fd1 = 2*speed1/lambda;
@@ -265,6 +265,22 @@ function [odata_s] = simulator_EJ5(config_s)
 
             % Agregar título
             title('Gráfico 3D de la transformada de Fourier 2D');
+            figure;
+            subplot(2,1,1);
+            plot(X,abs(fft_m),'Linewidth',2);
+            grid on;
+            title('Salida de FTT')
+            xlabel('Rango')
+            ylabel('Amplitude')
+
+            subplot(2,1,2);
+            plot(Y,abs(fft_m),'Linewidth',2);
+            grid on;
+            title('Salida de FTT')
+            xlabel('Velocidad')
+            ylabel('Amplitude')
+
+        
             
         end
         target_comb = sub2ind(NFFT_v, row_tar_loc, col_tar_loc);
