@@ -97,7 +97,7 @@ ch_output0 = [ch_output_aux0; zeros(zeros_que_faltan0,1)];
 
 y_t0 = ch_output0;
 y_t1=ch_output1;
-y_t=y_t0+y_t1
+y_t=y_t0+y_t1;
 % 
 % figure
 %      subplot(211);e

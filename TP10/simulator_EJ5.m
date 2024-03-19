@@ -1,5 +1,4 @@
-
-function [odata_s] = fmcw_radar_simulator(config_s)
+function [odata_s] = simulator_EJ5(config_s)
 
     if exist('config_s','var')
         
@@ -22,7 +21,6 @@ function [odata_s] = fmcw_radar_simulator(config_s)
         pw_tx_dbm = config_s.pw_tx_dbm;
         
         % Target and channel
-        
         range = config_s.range;
         speed = config_s.speed;
         
@@ -58,7 +56,8 @@ function [odata_s] = fmcw_radar_simulator(config_s)
         
         range = 200;
         speed = 70;
-        
+        range_1=50;
+        speed_1 =30;
         range_max = 300;
         speed_max = 100;
         
@@ -116,6 +115,26 @@ function [odata_s] = fmcw_radar_simulator(config_s)
     tau = (fb-fd) / chirp_slope;
     range = tau * c / 2;
     speed = fd * lambda / 2;
+    %%
+    delta_R=c*chirp_T/(2*chirp_bw*t_meas);
+    delta_V=lambda/(2*chirp_P*chirp_T);
+    range1=range + range_1*delta_R;
+    speed1=speed + speed_1*delta_V;
+    tau1 = 2*range1/c; 
+    %Target Aux
+    fd1 = 2*speed1/lambda;
+    fr1 = tau1 * chirp_slope;
+    fb1 = fr1 + fd1;
+    
+    col_tar_loc = fix(fb1*t_meas) + 1;
+    row_tar_loc = fix(fd1*chirp_T*chirp_P)+1;
+    
+    % Modifico un poco el target para que caiga en el centro de la celda
+    fb1 = (col_tar_loc-1) / t_meas;
+    fd1 = (row_tar_loc - 1) / (chirp_T*chirp_P);
+    tau1 = (fb1-fd1) / chirp_slope;
+    range1 = tau1 * c / 2;
+    speed1 = fd1 * lambda / 2;
     
     % Rx
     snr = 10^(snr_db/10);
@@ -161,8 +180,12 @@ function [odata_s] = fmcw_radar_simulator(config_s)
     
     % Ch & Tg
     tau_samples = fix(tau*fs_ch);
-    rx_v = [zeros(1,tau_samples), tx_v(1:end-tau_samples)] .* ...
+    tau_samples1 = fix(tau1*fs_ch);
+    rx_v0 = [zeros(1,tau_samples), tx_v(1:end-tau_samples)] .* ...
                                                     exp(-1j*2*pi*fd*t_v);
+    rx_v1 = [zeros(1,tau_samples1), tx_v(1:end-tau_samples1)] .* ...
+                                                    exp(-1j*2*pi*fd1*t_v);
+    rx_v=rx_v1+rx_v0;
                                                 
     % Rx
     mix_v = tx_v .* conj(rx_v);
@@ -226,17 +249,19 @@ function [odata_s] = fmcw_radar_simulator(config_s)
         
         if idx==1 && en_plots
             figure;
-             X = linspace(0, range_max , size(fft_m, 2));
-             Y = linspace(0, , size(fft_m, 1));
+             X = linspace(0,  fb_max, size(fft_m, 2));
+             Y = linspace(0, fd_max, size(fft_m, 1));
 
 
             % Graficar los datos
             surf(X,Y,abs(fft_m), 'EdgeColor', 'none');
 
             % Etiquetar los ejes
-            xlabel('Rango del Target');
-            ylabel('Velocidad del Target');
+            xlabel('Beta freq');
+            ylabel('Doppler freq');
             zlabel('Magnitud');
+            xlim([0,fb_max]);
+            ylim([0,fd_max]);
 
             % Agregar título
             title('Gráfico 3D de la transformada de Fourier 2D');
@@ -290,58 +315,7 @@ function [odata_s] = fmcw_radar_simulator(config_s)
     speed_sim_prec = std(est_speed);
     range_theo_prec = 1/(2*pi*t_meas)*sqrt(6/snr_est)*chirp_T*c/(2*chirp_bw);
     speed_theo_prec = 1/(2*pi*chirp_T*chirp_P)*sqrt(6/snr_est)*lambda/2;
-    %% Plots
-    if en_plots
-        
-        % -- PSD -- 
-        figure;
-        
-        subplot(2,1,1);
-        plot(10*log10(psd_m./max_psd),'Linewidth',2);
-        grid on;
-        title('PSD')
-        xlabel('Doppler freq index')
-        ylabel('Normalized amplitude [dB]')
-        
-        subplot(2,1,2);
-        plot(10*log10(psd_m.'./max_psd),'Linewidth',2);
-        grid on;
-        title('PSD')
-        xlabel('Beat freq index')
-        ylabel('Normalized amplitude [dB]')
-        
-        % -- ROC --
-        figure;
-        idx_leg = 1;
-        legends_c = {};
-        fz = 15;
-        
-        % Theoretical ROC
-        semilogx(pfa_th_v, pd_th_v, '--', 'LineWidth', 1.2);
-        legends_c{idx_leg} = sprintf('Theo');
-        idx_leg = idx_leg + 1;
-        hold on;
-
-        % Simulated ROC
-        p_sim = semilogx(pfa_est_v, pd_est_v, 'o-r');
-        p_sim.MarkerFaceColor = p_sim.Color;
-        p_sim.MarkerEdgeColor = 'k';
-        legends_c{idx_leg} = sprintf('Sim');
-        % Title, legends, etc
-        tit = sprintf("ROC. SNR = %.1f [dB]",snr_db);
-        title(tit, 'Interpreter','latex','FontSize', fz);
-
-        legend(legends_c,'Location','southeast','Interpreter','latex','FontSize', fz-2);
-        xlabel('Probability of False Alarm', 'Interpreter','latex','FontSize', fz);
-        ylabel('Probability of Detection', 'Interpreter','latex','FontSize', fz);
-        grid on
-        ylim([0,1.1])
-        xlim([1e-5,1])
-
-        set(gcf, 'Position', [50 50 700 700],'Color', 'w');
-        
-    end
-    
+   
     %% Output
     odata_s.snr_est_db = snr_est_db;
     odata_s.pd_est_v = pd_est_v;

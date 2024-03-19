@@ -40,11 +40,11 @@ function [odata_s] = fmcw_radar_simulator(config_s)
         
         % General
         
-        fs_ch = 600e6; % Frecuancia del canal
+        fs_ch = 400e6; % Frecuancia del canal
         fs_dsp = 100e6;% Frecuencia del dsp
         n_fires = 1e2; % Disparos al target 
-        en_noise = 1; % activador de  ruido 
-        en_plots = 0; % activador de  graficos 
+        en_noise = 0; % activador de  ruido 
+        en_plots = 1; % activador de  graficos 
         
         % TX
         chirp_bw = 100e6; %
@@ -65,7 +65,7 @@ function [odata_s] = fmcw_radar_simulator(config_s)
         % RX
         
         snr_db = 16;
-        fft_zp = 16;
+        fft_zp = 8;
         
         n_thr = 20;
         
@@ -226,17 +226,19 @@ function [odata_s] = fmcw_radar_simulator(config_s)
         
         if idx==1 && en_plots
             figure;
-             X = linspace(0, range_max , size(fft_m, 2));
-             Y = linspace(speed_max,0 , size(fft_m, 1));
+             X = linspace(0,  fb_max, size(fft_m, 2));
+             Y = linspace(0, fd_max, size(fft_m, 1));
 
 
             % Graficar los datos
             surf(X,Y,abs(fft_m), 'EdgeColor', 'none');
 
             % Etiquetar los ejes
-            xlabel('Rango del Target');
-            ylabel('Velocidad del Target');
+            xlabel('Beta freq');
+            ylabel('Doppler freq');
             zlabel('Magnitud');
+            xlim([0,fb_max]);
+            ylim([0,fd_max]);
 
             % Agregar título
             title('Gráfico 3D de la transformada de Fourier 2D');
