@@ -58,7 +58,8 @@ function [odata_s] = fmcw_radar_simulator(config_s)
         
         range = 200;
         speed = 70;
-        
+        deltaR=700;
+        deltaV =700;
         range_max = 300;
         speed_max = 100;
         
@@ -117,6 +118,28 @@ function [odata_s] = fmcw_radar_simulator(config_s)
     range = tau * c / 2;
     speed = fd * lambda / 2;
     
+     %%
+    delta_R=c*chirp_T/(2*chirp_bw*t_meas);
+    delta_V=lambda/(2*chirp_P*chirp_T);
+    range1=range + deltaR*delta_R;
+    speed1=speed + deltaV*delta_V;
+    tau1 = 2*range1/c; 
+    %Target Aux
+    fd1 = 2*speed1/lambda;
+    fr1 = tau1 * chirp_slope;
+    fb1 = fr1 + fd1;
+    
+    col_tar_loc1 = fix(fb1*t_meas) + 1;
+    row_tar_loc1 = fix(fd1*chirp_T*chirp_P)+1;
+    
+    % Modifico un poco el target para que caiga en el centro de la celda
+    fb1 = (col_tar_loc1-1) / t_meas;
+    fd1 = (row_tar_loc1 - 1) / (chirp_T*chirp_P);
+    tau1 = (fb1-fd1) / chirp_slope;
+    range1 = tau1 * c / 2;
+    speed1 = fd1 * lambda / 2;
+    
+    
     % Rx
     snr = 10^(snr_db/10);
     
@@ -159,10 +182,15 @@ function [odata_s] = fmcw_radar_simulator(config_s)
     
     tx_v = sqrt(pw_tx) * chirp_frame_v;
     
+   
     % Ch & Tg
     tau_samples = fix(tau*fs_ch);
-    rx_v = [zeros(1,tau_samples), tx_v(1:end-tau_samples)] .* ...
+    tau_samples1 = fix(tau1*fs_ch);
+    rx_v0 = [zeros(1,tau_samples), tx_v(1:end-tau_samples)] .* ...
                                                     exp(-1j*2*pi*fd*t_v);
+    rx_v1 = [zeros(1,tau_samples1), tx_v(1:end-tau_samples1)] .* ...
+                                                    exp(-1j*2*pi*fd1*t_v);
+    rx_v=rx_v1+rx_v0;
                                                 
     % Rx
     mix_v = tx_v .* conj(rx_v);

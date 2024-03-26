@@ -1,7 +1,7 @@
 clear; close all; clc;
 
-config_s.fs_ch =800e6;
-config_s.fs_dsp=200e6;
+config_s.fs_ch =400e6;
+config_s.fs_dsp=100e6;
 
 config_s.n_fires=100;
 
@@ -34,7 +34,7 @@ config_s.n_thr=20;
 
 snr=[10,12,14,16,18,20];
 n_snr=length(snr);
-bw=[50e6,100e6,150e6];
+bw=[100e6];
 n_bw=length(bw);
 T=[6e-6,12e-6,18e-6];
 n_T=length(T);
@@ -61,10 +61,10 @@ end
 
 %%
 %%Plot
-for idx_T = 1:n_T
+for idx_bw = 1:n_bw
     % Gráfico de precisión del rango vs SNR con escala logarítmica en el eje y
     figure;
-    for idx_bw = 1:n_bw
+    for idx_T = 1:n_T
         % Precisión simulada
         semilogy(snr, sim_prec_range(:, idx_bw, idx_T), 'o-', 'LineWidth', 2, 'DisplayName', sprintf('Sim - BW: %d MHz, T: %d µs', bw(idx_bw)/1e6, T(idx_T)*1e6));
         hold on;
@@ -73,13 +73,13 @@ for idx_T = 1:n_T
     end
     xlabel('SNR (dB)');
     ylabel('Precisión de Rango (m)');
-    title(sprintf('Precisión de Rango vs SNR para T = %d µs', T(idx_T)*1e6));
+    title(sprintf('Precisión de Rango vs SNR'));
     legend('Location', 'best');
     grid on;
 
     % Gráfico de precisión de velocidad vs SNR con escala logarítmica en el eje y
     figure;
-    for idx_bw = 1:n_bw
+    for idx_T = 1:n_T
         % Precisión simulada
        semilogy(snr, sim_prec_speed(:, idx_bw, idx_T), '-o', 'LineWidth', 2, 'DisplayName', sprintf('Sim - BW: %d MHz, T: %d µs', bw(idx_bw)/1e6, T(idx_T)*1e6));
        hold on;
@@ -88,10 +88,10 @@ for idx_T = 1:n_T
     end
     xlabel('SNR (dB)');
     ylabel('Precisión de Velocidad (m/s)');
-    title(sprintf('Precisión de Velocidad vs SNR para T = %d µs', T(idx_T)*1e6));
+    title(sprintf('Precisión de Velocidad vs SNR '));
     legend('Location', 'best');
     grid on;
 end
 %%
- file_name = 'out_data.mat';
- save(file_name, 'sim_prec_range','theo_prec_range','sim_prec_speed','theo_prec_speed','config_s','snr','bw','T');
+%  file_name = 'out_data.mat';
+%  save(file_name, 'sim_prec_range','theo_prec_range','sim_prec_speed','theo_prec_speed','config_s','snr','bw','T');

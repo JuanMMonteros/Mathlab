@@ -33,6 +33,8 @@ function [odata_s] = simulator_EJ5(config_s)
         fft_zp = config_s.fft_zp;
         
         n_thr = config_s.n_thr;
+        deltaR=config_s.deltaR;
+        deltaV =config_s.deltaV;
         
     else
         
@@ -56,8 +58,8 @@ function [odata_s] = simulator_EJ5(config_s)
         
         range = 200;
         speed = 70;
-        deltaR=0.5;
-        deltaV =0.5;
+        deltaR=10;
+        deltaV =10;
         range_max = 300;
         speed_max = 100;
         
@@ -115,7 +117,7 @@ function [odata_s] = simulator_EJ5(config_s)
     tau = (fb-fd) / chirp_slope;
     range = tau * c / 2;
     speed = fd * lambda / 2;
-    %%
+    %% Target AuX
     delta_R=c*chirp_T/(2*chirp_bw*t_meas);
     delta_V=lambda/(2*chirp_P*chirp_T);
     range1=range + deltaR*delta_R;
@@ -126,12 +128,12 @@ function [odata_s] = simulator_EJ5(config_s)
     fr1 = tau1 * chirp_slope;
     fb1 = fr1 + fd1;
     
-    col_tar_loc = fix(fb1*t_meas) + 1;
-    row_tar_loc = fix(fd1*chirp_T*chirp_P)+1;
+    col_tar_loc1 = fix(fb1*t_meas) + 1;
+    row_tar_loc1 = fix(fd1*chirp_T*chirp_P)+1;
     
     % Modifico un poco el target para que caiga en el centro de la celda
-    fb1 = (col_tar_loc-1) / t_meas;
-    fd1 = (row_tar_loc - 1) / (chirp_T*chirp_P);
+    fb1 = (col_tar_loc1-1) / t_meas;
+    fd1 = (row_tar_loc1 - 1) / (chirp_T*chirp_P);
     tau1 = (fb1-fd1) / chirp_slope;
     range1 = tau1 * c / 2;
     speed1 = fd1 * lambda / 2;
@@ -240,49 +242,16 @@ function [odata_s] = simulator_EJ5(config_s)
 
            % Encuentra los índices de los valores máximos
             [rowIndex, colIndex, pageIndex] = ind2sub(size(fft_zp_m), find(abs(fft_zp_m) == maxValue));
-            est_range(idx) = (colIndex-1)*fs_dsp / size(fft_zp_m, 2) /chirp_slope* c / 2;
-            est_speed(idx) = (rowIndex-1) * fs_dsp / (size(fft_zp_m, 1))*(t_meas*chirp_P)*lambda/2;
+            est_range(idx) = (colIndex-1)*fs_dsp / size(fft_zp_m, 2);
+            est_speed(idx) = (rowIndex-1) * fs_dsp / (size(fft_zp_m, 1));
         
         NFFT_v = size(fft_m);
         
         psd_m = psd_m + (abs(fft_m).^2/n_fires);
         
-        if idx==1 && en_plots
-            figure;
-             X = linspace(0,  fb_max, size(fft_m, 2));
-             Y = linspace(0, fd_max, size(fft_m, 1));
-
-
-            % Graficar los datos
-            surf(X,Y,abs(fft_m), 'EdgeColor', 'none');
-
-            % Etiquetar los ejes
-            xlabel('Beta freq');
-            ylabel('Doppler freq');
-            zlabel('Magnitud');
-            xlim([0,fb_max]);
-            ylim([0,fd_max]);
-
-            % Agregar título
-            title('Gráfico 3D de la transformada de Fourier 2D');
-            figure;
-            subplot(2,1,1);
-            plot(X,abs(fft_m),'Linewidth',2);
-            grid on;
-            title('Salida de FTT')
-            xlabel('Rango')
-            ylabel('Amplitude')
-
-            subplot(2,1,2);
-            plot(Y,abs(fft_m),'Linewidth',2);
-            grid on;
-            title('Salida de FTT')
-            xlabel('Velocidad')
-            ylabel('Amplitude')
-
-        
-            
-        end
+        X = linspace(0,  fb_max, size(fft_zp_m, 2));
+        Y = linspace(0, fd_max, size(fft_zp_m, 1));
+ 
         target_comb = sub2ind(NFFT_v, row_tar_loc, col_tar_loc);
         
         if idx == 1
@@ -342,5 +311,8 @@ function [odata_s] = simulator_EJ5(config_s)
     odata_s.speed_sim_prec = speed_sim_prec;
     odata_s.range_theo_prec = range_theo_prec;
     odata_s.speed_theo_prec = speed_theo_prec;
+    odata_s.fft_zp_m = fft_zp_m;
+    odata_s.X = X;
+    odata_s.Y = Y;
     
 end
