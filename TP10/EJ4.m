@@ -48,7 +48,14 @@ for idx=1:n_snr
     pd_est_v(:,idx)= odata.pd_est_v;
     pfa_est_v(:,idx)= odata.pfa_est_v;
 end
+
+
+
 %%
+
+% Asignación manual de colores para cada valor de SNR
+colors = lines(n_snr); % Utiliza el mapa de colores 'lines'
+
 % -- ROC --
 figure;
 idx_leg = 1;
@@ -56,16 +63,21 @@ legends_c = {};
 fz = 15;
 
 for idx = 1:n_snr
+     % Color para el valor de SNR actual
+    color = colors(idx,:);
+    
     % Theoretical ROC
-    semilogx(pfa_th_v(:,idx), pd_th_v(:,idx), '--', 'LineWidth', 1.2);
+    semilogx(pfa_th_v(:,idx), pd_th_v(:,idx), '--', 'LineWidth', 1.2, 'Color', color);
     legends_c{idx_leg} = sprintf('Theo - SNR %.1f dB', snr(idx));
     idx_leg = idx_leg + 1;
     hold on;
 
     % Simulated ROC
-    semilogx(pfa_est_v(:,idx), pd_est_v(:,idx), 'o-', 'LineWidth', 1.2);
+    semilogx(pfa_est_v(:,idx), pd_est_v(:,idx), 'o-', 'LineWidth', 1.2, 'Color', color);
     legends_c{idx_leg} = sprintf('Sim - SNR %.1f dB', snr(idx));
     idx_leg = idx_leg + 1;
+    
+    
 end
 
 % Title, legends, etc
